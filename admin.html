@@ -32,7 +32,7 @@ label{font-size:12px;font-weight:700}
 .btn{background:linear-gradient(135deg,var(--brown),#8a4a2e);color:#fff;padding:11px 16px;border-radius:12px;font-weight:700;box-shadow:0 5px 14px #6b382533}
 .btn.orange{background:linear-gradient(135deg,var(--orange),#e89a58)}.btn.red{background:var(--red)}.btn.green{background:var(--green)}
 .btn.light{background:#f1e4d4;color:var(--brown);box-shadow:none}
-.btn:disabled{opacity:.5;cursor:not-allowed}
+a.btn{text-decoration:none}.btn:disabled{opacity:.5;cursor:not-allowed}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
 .tab{padding:10px 17px;background:#efdfca;color:var(--brown);border-radius:12px;font-weight:700}
 .tab.active{background:linear-gradient(135deg,var(--brown),#8a4a2e);color:#fff}
@@ -79,7 +79,7 @@ label{font-size:12px;font-weight:700}
 <section id="dashboard" class="hidden">
  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
   <div><h2>Dashboard</h2><p class="muted" id="adminEmail"></p></div>
-  <button class="btn light" onclick="logout()">Logout</button>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn light" href="index.html" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block">🧋 View customer site</a><button class="btn light" onclick="logout()">Logout</button></div>
  </div>
  <div class="stats">
   <div class="stat"><b id="productCount">0</b><span>Products</span></div>
