@@ -178,6 +178,8 @@ footer{text-align:center;padding:35px 10px;color:var(--muted);font-size:12px}
  <div class="panel" style="text-align:left"><p class="muted">Your order number</p><h2 id="successOrderNumber" style="color:var(--brown)">—</h2><p class="muted" style="margin-top:15px">Your private tracking code. Keep this safe!</p><p id="successToken" style="font-size:11px;word-break:break-all;font-weight:700"></p></div>
  <p class="muted">Your order tracking has been saved on this device.</p><button class="primary-btn" onclick="finishOrder()" style="width:100%">View my order status</button></div></div>
 <script>
+/* Hide index.html from the address bar */
+if(/\/index\.html$/i.test(location.pathname)){history.replaceState(null,"",location.pathname.replace(/index\.html$/i,"")+location.search+location.hash)}
 const SUPABASE_URL="https://soejrrbvdjllbqtkfdqm.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_wzFt1BdjWWTVlEdI6KfsYg_zHXLP6yq";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
