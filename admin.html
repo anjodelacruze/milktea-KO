@@ -266,7 +266,7 @@ function renderOrders(){
    <p>${o.created_at?new Date(o.created_at).toLocaleString():''}</p>
    <div class="actions">
     <select class="field" style="width:auto;min-width:145px;margin:0" id="status-${o.id}">${['Pending','Confirmed','Preparing','Ready','Completed','Cancelled'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}</select>
-    <button class="btn orange" onclick="updateOrderStatus('${o.id}')">Update Status</button>
+    <button class="btn orange" onclick="updateOrderStatus('${o.id}')">Update Status</button>${DONE.includes(o.status)?`<button class="btn red" onclick="deleteOrder('${o.id}')">🗑 Delete</button>`:''}
    </div></div></div>`;
  }).join(''):'<p class="muted">No active orders. 🎉</p>';
 }
@@ -280,6 +280,15 @@ async function updateOrderStatus(id){
   fadingBusy=true;row.classList.add('fade-out');toast(status==='Completed'?'✅ Order completed!':'Order cancelled');
   setTimeout(()=>{fadingBusy=false;renderOrders()},800);
  }else{toast('Order status updated.');renderOrders()}
+}
+async function deleteOrder(id){
+ if(!confirm('Burahin ang order na ito nang tuluyan? Hindi na ito mababalik.'))return;
+ const {data,error}=await db.from('orders').delete().eq('id',id).select('id');
+ if(error){alert('Could not delete order: '+error.message);return}
+ if(!data||!data.length){alert('Hindi nabura ang order. Completed o Cancelled lang ang puwedeng burahin.');return}
+ const row=$('row-'+id);if(row)row.classList.add('fade-out');
+ fadingBusy=true;toast('🗑 Order deleted');
+ setTimeout(()=>{fadingBusy=false;orders=orders.filter(o=>o.id!==id);renderOrders()},800);
 }
 checkAdmin();
 </script>
