@@ -1,254 +1,1321 @@
 
+
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <meta name="theme-color" content="#6b3825">
+
 <title>Milktea KO | Your Daily Milk Tea</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-:root{--brown:#6b3825;--dark:#40251b;--orange:#d98742;--cream:#fff8ed;--light:#f8ead7;--muted:#927d6e;--green:#45845c;--shadow:0 8px 30px #4b2a1918}
+
+:root{
+
+ --brown:#6b3825;--dark:#40251b;--orange:#d98742;
+
+ --cream:#fff8ed;--light:#f8ead7;--muted:#927d6e;
+
+ --green:#45845c;--shadow:0 8px 30px #4b2a1918
+
+}
+
 *{box-sizing:border-box;margin:0;padding:0}
+
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark)}
-button,input,textarea{font:inherit}button{cursor:pointer;border:0}
-.container{width:min(1100px,92%);margin:auto}.hidden{display:none!important}
+
+button,input,textarea{font:inherit}
+
+button{cursor:pointer;border:0}
+
+.container{width:min(1100px,92%);margin:auto}
+
+.hidden{display:none!important}
+
 .topbar{background:var(--brown);color:white;text-align:center;padding:8px;font-size:12px}
+
 header{background:#fff8edf2;position:sticky;top:0;z-index:20;backdrop-filter:blur(12px);border-bottom:1px solid #efdfca}
+
 .nav{height:66px;display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:Poppins;font-size:23px;font-weight:800;color:var(--brown)}.logo span{color:var(--orange)}
+
+.logo{font-family:Poppins;font-size:23px;font-weight:800;color:var(--brown)}
+
+.logo span{color:var(--orange)}
+
 .cart-btn{background:var(--brown);color:white;padding:11px 17px;border-radius:30px;font-weight:700}
-.hero{padding:25px 0 10px}.hero-box{background:linear-gradient(120deg,#6b3825,#a65c35);border-radius:25px;padding:35px 25px;color:white;min-height:220px;display:flex;align-items:center;position:relative;overflow:hidden}
+
+.hero{padding:25px 0 10px}
+
+.hero-box{background:linear-gradient(120deg,#6b3825,#a65c35);border-radius:25px;padding:35px 25px;color:white;min-height:220px;display:flex;align-items:center;position:relative;overflow:hidden}
+
 .hero-box:after{content:'🧋';position:absolute;right:7%;font-size:110px;animation:float 3s ease-in-out infinite}
-.hero-content{position:relative;z-index:1;max-width:70%}.hero h1{font-family:Poppins;font-size:clamp(28px,5vw,43px);line-height:1.15;margin:10px 0}.hero p{font-size:14px;color:#ffead7}
+
+.hero-content{position:relative;z-index:1;max-width:70%}
+
+.hero h1{font-family:Poppins;font-size:clamp(28px,5vw,43px);line-height:1.15;margin:10px 0}
+
+.hero p{font-size:14px;color:#ffead7}
+
 .hero-tag{background:#ffffff25;padding:7px 12px;border-radius:20px;font-size:11px}
-.primary-btn{background:var(--orange);color:white;padding:12px 20px;border-radius:13px;font-weight:700;margin-top:15px;transition:.2s}.primary-btn:active{transform:scale(.96)}
+
+.primary-btn{background:var(--orange);color:white;padding:12px 20px;border-radius:13px;font-weight:700;margin-top:15px;transition:.2s}
+
+.primary-btn:active{transform:scale(.96)}
+
 @keyframes float{50%{transform:translateY(-12px) rotate(-5deg)}}
+
 .section-title{font-family:Poppins;font-size:21px;margin:24px 0 13px}
+
 .search,.field{width:100%;padding:14px 16px;border:1px solid #ead9c5;background:white;border-radius:13px;outline:none;margin:6px 0 12px}
+
 .search:focus,.field:focus{border-color:var(--orange)}
+
 .categories{display:flex;gap:9px;overflow-x:auto;padding:12px 0;scrollbar-width:none}
+
 .category{white-space:nowrap;padding:9px 17px;border-radius:30px;background:white;border:1px solid #efdfca;color:var(--brown);font-weight:600}
+
 .category.active{background:var(--brown);color:white}
+
 .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+
 .product{background:white;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:.2s}
+
 .product:active{transform:scale(.98)}
+
 .product-image{height:145px;background:linear-gradient(135deg,#f8e6d0,#e9c39c);display:flex;align-items:center;justify-content:center;overflow:hidden}
-.product-image img{width:100%;height:100%;object-fit:cover}.emoji{font-size:65px}
-.product-info{padding:13px}.product-info h3{font-size:14px;margin:6px 0}.product-info p{font-size:11px;color:var(--muted);min-height:25px}
+
+.product-image img{width:100%;height:100%;object-fit:cover}
+
+.emoji{font-size:65px}
+
+.product-info{padding:13px}
+
+.product-info h3{font-size:14px;margin:6px 0}
+
+.product-info p{font-size:11px;color:var(--muted);min-height:25px}
+
 .product-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
-.price{font-weight:800;color:var(--brown)}.add-small{background:var(--brown);color:white;width:34px;height:34px;border-radius:50%;font-size:21px}
+
+.price{font-weight:800;color:var(--brown)}
+
+.add-small{background:var(--brown);color:white;width:34px;height:34px;border-radius:50%;font-size:21px}
+
 .badge{font-size:10px;color:white;background:var(--green);padding:4px 8px;border-radius:20px}
+
 .empty{text-align:center;padding:30px;color:var(--muted)}
+
 .panel{background:white;border-radius:17px;padding:16px;margin:12px 0}
+
 footer{text-align:center;padding:35px 10px;color:var(--muted);font-size:12px}
+
 .overlay{position:fixed;inset:0;background:#20140fcc;z-index:50;display:flex;align-items:flex-end;justify-content:center}
+
 .modal{background:var(--cream);width:min(520px,100%);max-height:92vh;overflow:auto;border-radius:25px 25px 0 0;padding:22px;animation:slideup .25s}
+
 @keyframes slideup{from{transform:translateY(35px);opacity:0}to{transform:translateY(0);opacity:1}}
+
 .close{float:right;background:#efdfca;width:35px;height:35px;border-radius:50%;font-size:20px}
+
 .modal-image{height:190px;border-radius:17px;background:#f1dfc8;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:12px 0}
+
 .modal-image img{width:100%;height:100%;object-fit:cover}
-.modal h2{font-family:Poppins;font-size:22px}.muted{color:var(--muted);font-size:13px}
+
+.modal h2{font-family:Poppins;font-size:22px}
+
+.muted{color:var(--muted);font-size:13px}
+
 .option-title{font-weight:800;margin:17px 0 9px;font-size:13px}
+
 .option-list{display:flex;flex-wrap:wrap;gap:8px}
+
 .option{border:1px solid #e7d4bf;background:white;padding:9px 13px;border-radius:12px;font-size:12px}
+
 .option.selected{background:var(--brown);border-color:var(--brown);color:white}
-.quantity{display:flex;align-items:center;gap:16px}.quantity button{background:#ead8c3;width:34px;height:34px;border-radius:50%;font-size:20px}
+
+.quantity{display:flex;align-items:center;gap:16px}
+
+.quantity button{background:#ead8c3;width:34px;height:34px;border-radius:50%;font-size:20px}
+
 .modal-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:20px}
+
 .modal-actions .primary-btn{margin:0;flex:1}
+
 .cart-line{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #f0e4d7;padding:12px 0;font-size:13px}
+
 .cart-line button{color:#b34b36;background:none}
+
 .total-row{display:flex;justify-content:space-between;margin:10px 0;font-size:14px}
+
 .total-row.big{font-weight:800;font-size:18px}
+
 .bottom-nav{position:sticky;bottom:0;background:#fffdf8;border-top:1px solid #eadbc9;display:flex;justify-content:space-around;padding:10px;z-index:10}
-.bottom-nav button{background:none;color:var(--brown);font-size:11px;font-weight:700}.bottom-nav span{display:block;font-size:20px;margin-bottom:3px}
+
+.bottom-nav button{background:none;color:var(--brown);font-size:11px;font-weight:700}
+
+.bottom-nav span{display:block;font-size:20px;margin-bottom:3px}
+
 #splash{position:fixed;inset:0;background:var(--brown);z-index:100;display:flex;align-items:center;justify-content:center;color:white;text-align:center;flex-direction:column}
+
 .splash-logo{font-family:Poppins;font-size:38px;font-weight:800;animation:pop .8s}
-.splash-logo span{color:#f0ad6c}.splash-cup{font-size:60px;animation:float 2s infinite}
+
+.splash-logo span{color:#f0ad6c}
+
+.splash-cup{font-size:60px;animation:float 2s infinite}
+
 @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+
 #onboarding{position:fixed;inset:0;background:var(--cream);z-index:90;display:flex;align-items:center;justify-content:center;padding:25px;text-align:center}
-.onboard-card{max-width:390px}.onboard-emoji{font-size:100px;margin-bottom:20px}
+
+.onboard-card{max-width:390px}
+
+.onboard-emoji{font-size:100px;margin-bottom:20px}
+
 .onboard-card h2{font-family:Poppins;font-size:27px;margin-bottom:10px}
-.dots{display:flex;gap:8px;justify-content:center;margin:22px}.dot{height:8px;width:8px;border-radius:20px;background:#decab4}.dot.active{background:var(--brown);width:23px}
-@media(max-width:650px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.product-image{height:125px}.product-info{padding:11px}.hero-box{padding:27px 20px;min-height:205px}.hero-box:after{right:0;font-size:85px;opacity:.55}.hero-content{max-width:78%}}
+
+.dots{display:flex;gap:8px;justify-content:center;margin:22px}
+
+.dot{height:8px;width:8px;border-radius:20px;background:#decab4}
+
+.dot.active{background:var(--brown);width:23px}
+
+.status-pending{color:#a66a16}
+
+.status-confirmed{color:#2675a5}
+
+.status-preparing{color:#b36b22}
+
+.status-ready{color:#45845c}
+
+.status-completed{color:#45845c}
+
+.status-cancelled{color:#b34b36}
+
+@media(max-width:650px){
+
+ .product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+
+ .product-image{height:125px}
+
+ .product-info{padding:11px}
+
+ .hero-box{padding:27px 20px;min-height:205px}
+
+ .hero-box:after{right:0;font-size:85px;opacity:.55}
+
+ .hero-content{max-width:78%}
+
+}
+
 </style>
+
 </head>
+
 <body>
-<div id="splash"><div class="splash-cup">🧋</div><div class="splash-logo">MILKTEA <span>KO</span></div><p style="margin-top:9px;font-size:12px">Your daily happiness in a cup.</p></div>
+
+<div id="splash">
+
+ <div class="splash-cup">🧋</div>
+
+ <div class="splash-logo">MILKTEA <span>KO</span></div>
+
+ <p style="margin-top:9px;font-size:12px">Your daily happiness in a cup.</p>
+
+</div>
 
 <div id="onboarding" class="hidden">
+
  <div class="onboard-card">
-  <div class="onboard-emoji" id="onEmoji">🧋</div><h2 id="onTitle">Welcome to Milktea KO!</h2>
+
+  <div class="onboard-emoji" id="onEmoji">🧋</div>
+
+  <h2 id="onTitle">Welcome to Milktea KO!</h2>
+
   <p class="muted" id="onText">Your favorite milk tea is just a few taps away.</p>
-  <div class="dots"><i class="dot active"></i><i class="dot"></i><i class="dot"></i></div>
+
+  <div class="dots">
+
+   <i class="dot active"></i><i class="dot"></i><i class="dot"></i>
+
+  </div>
+
   <button class="primary-btn" id="onNext">Continue</button>
+
  </div>
+
 </div>
 
 <div id="app">
+
  <div class="topbar">🧋 Freshly made happiness • Order your favorite today!</div>
- <header><div class="container nav"><div class="logo">MILKTEA <span>KO.</span></div><button class="cart-btn" onclick="showCart()">🛒 Cart <b id="cartCount">0</b></button></div></header>
+
+ <header>
+
+  <div class="container nav">
+
+   <div class="logo">MILKTEA <span>KO.</span></div>
+
+   <button class="cart-btn" onclick="showCart()">🛒 Cart <b id="cartCount">0</b></button>
+
+  </div>
+
+ </header>
+
  <main class="container">
-  <section class="hero"><div class="hero-box"><div class="hero-content"><span class="hero-tag">YOUR MILK TEA SPOT</span><h1>Good mood.<br>Good milk tea.</h1><p>Choose your flavor, customize your cup, and enjoy!</p><button class="primary-btn" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Order now →</button></div></div></section>
-  <section><h2 class="section-title">What are you craving? 😋</h2><input class="search" id="search" placeholder="🔍 Search your favorite drink..." oninput="renderProducts()">
-   <div class="categories" id="categories">
-    <button class="category active" onclick="setCategory('All',this)">All</button>
-    <button class="category" onclick="setCategory('Best Sellers',this)">⭐ Best Sellers</button>
-    <button class="category" onclick="setCategory('Classic',this)">Classic</button>
-    <button class="category" onclick="setCategory('Fruit Tea',this)">Fruit Tea</button>
-    <button class="category" onclick="setCategory('Cheese Series',this)">Cheese Series</button>
+
+  <section class="hero">
+
+   <div class="hero-box">
+
+    <div class="hero-content">
+
+     <span class="hero-tag">YOUR MILK TEA SPOT</span>
+
+     <h1>Good mood.<br>Good milk tea.</h1>
+
+     <p>Choose your flavor, customize your cup, and enjoy!</p>
+
+     <button class="primary-btn" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Order now →</button>
+
+    </div>
+
    </div>
+
   </section>
-  <section id="menu"><h2 class="section-title">Our Drinks 🧋</h2><div id="productGrid" class="product-grid"><div class="empty">Loading drinks...</div></div></section>
-  <section class="panel" style="margin-top:28px"><h2 style="font-family:Poppins;font-size:18px">Track your order 📦</h2><p class="muted">Enter your order number and private tracking code.</p>
-   <input class="field" id="trackNumber" placeholder="Order number"><input class="field" id="trackToken" placeholder="Private tracking code">
-   <button class="primary-btn" style="width:100%;margin:0" onclick="trackOrder()">Track order</button><div id="trackingResult"></div>
+
+  <section>
+
+   <h2 class="section-title">What are you craving? 😋</h2>
+
+   <input class="search" id="search" placeholder="🔍 Search your favorite drink..." oninput="renderProducts()">
+
+   <div class="categories" id="categories">
+
+    <button class="category active" onclick="setCategory('All',this)">All</button>
+
+    <button class="category" onclick="setCategory('Best Sellers',this)">⭐ Best Sellers</button>
+
+    <button class="category" onclick="setCategory('Classic',this)">Classic</button>
+
+    <button class="category" onclick="setCategory('Fruit Tea',this)">Fruit Tea</button>
+
+    <button class="category" onclick="setCategory('Cheese Series',this)">Cheese Series</button>
+
+   </div>
+
   </section>
+
+  <section id="menu">
+
+   <h2 class="section-title">Our Drinks 🧋</h2>
+
+   <div id="productGrid" class="product-grid">
+
+    <div class="empty">Loading drinks...</div>
+
+   </div>
+
+  </section>
+
+  <section class="panel" style="margin-top:28px" id="trackingSection">
+
+   <h2 style="font-family:Poppins;font-size:18px">Track your order 📦</h2>
+
+   <p class="muted">Your latest order will appear here automatically on this device.</p>
+
+   <input class="field" id="trackNumber" placeholder="Order number" autocomplete="off">
+
+   <input class="field" id="trackToken" placeholder="Private tracking code" autocomplete="off">
+
+   <button class="primary-btn" id="trackBtn" style="width:100%;margin:0" onclick="trackOrder()">Track order</button>
+
+   <div id="trackingResult" aria-live="polite"></div>
+
+  </section>
+
  </main>
- <footer><div class="logo">MILKTEA <span>KO.</span></div><p style="margin:8px">Made with ❤️ for milk tea lovers.</p></footer>
+
+ <footer>
+
+  <div class="logo">MILKTEA <span>KO.</span></div>
+
+  <p style="margin:8px">Made with ❤️ for milk tea lovers.</p>
+
+ </footer>
+
  <div class="bottom-nav">
+
   <button onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>🏠</span>Home</button>
+
   <button onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})"><span>🧋</span>Menu</button>
+
   <button onclick="showCart()"><span>🛒</span>Cart</button>
-  <button onclick="document.getElementById('trackNumber').scrollIntoView({behavior:'smooth'})"><span>📦</span>Track</button>
+
+  <button onclick="goToTracking()"><span>📦</span>Track</button>
+
  </div>
+
 </div>
 
-<div id="productOverlay" class="overlay hidden" onclick="if(event.target===this)closeProduct()"><div class="modal"><button class="close" onclick="closeProduct()">×</button><div id="productModalContent"></div></div></div>
-<div id="cartOverlay" class="overlay hidden" onclick="if(event.target===this)closeCart()"><div class="modal"><button class="close" onclick="closeCart()">×</button><h2 style="margin:8px 0 15px">Your Cart 🛒</h2><div id="cartContent"></div></div></div>
-<div id="checkoutOverlay" class="overlay hidden" onclick="if(event.target===this)closeCheckout()"><div class="modal"><button class="close" onclick="closeCheckout()">×</button><h2>Checkout</h2><p class="muted">Almost there! Enter your delivery details.</p>
- <form id="checkoutForm">
-  <label>Full name *</label><input class="field" id="custName" required placeholder="Your full name">
-  <label>Phone number *</label><input class="field" id="custPhone" required type="tel" pattern="(09[0-9]{9}|\\+639[0-9]{9})" placeholder="09XXXXXXXXX">
-  <label>Delivery address *</label><textarea class="field" id="custAddress" required rows="3" placeholder="House / building / street / barangay"></textarea>
-  <label>Additional instructions</label><textarea class="field" id="custNotes" rows="2" placeholder="Optional"></textarea>
-  <div class="panel"><div class="total-row"><span>Payment method</span><b>Cash on Delivery</b></div><div class="total-row big"><span>Total</span><span id="checkoutTotal">₱0</span></div></div>
-  <button class="primary-btn" id="placeOrderBtn" type="submit" style="width:100%;margin:0">Place order</button>
- </form>
-</div></div>
-<div id="successOverlay" class="overlay hidden"><div class="modal" style="text-align:center"><div style="font-size:65px;margin:15px">🎉</div><h2>Order placed!</h2><p class="muted">Thank you for ordering from Milktea KO.</p><div class="panel" style="text-align:left"><p class="muted">Your order number</p><h2 id="successOrderNumber" style="color:var(--brown)">—</h2><p class="muted" style="margin-top:15px">Your private tracking code. Keep this safe!</p><p id="successToken" style="font-size:11px;word-break:break-all;font-weight:700"></p></div><button class="primary-btn" onclick="finishOrder()" style="width:100%">Done</button></div></div>
+<div id="productOverlay" class="overlay hidden" onclick="if(event.target===this)closeProduct()">
+
+ <div class="modal">
+
+  <button class="close" onclick="closeProduct()">×</button>
+
+  <div id="productModalContent"></div>
+
+ </div>
+
+</div>
+
+<div id="cartOverlay" class="overlay hidden" onclick="if(event.target===this)closeCart()">
+
+ <div class="modal">
+
+  <button class="close" onclick="closeCart()">×</button>
+
+  <h2 style="margin:8px 0 15px">Your Cart 🛒</h2>
+
+  <div id="cartContent"></div>
+
+ </div>
+
+</div>
+
+<div id="checkoutOverlay" class="overlay hidden" onclick="if(event.target===this)closeCheckout()">
+
+ <div class="modal">
+
+  <button class="close" onclick="closeCheckout()">×</button>
+
+  <h2>Checkout</h2>
+
+  <p class="muted">Almost there! Enter your delivery details.</p>
+
+  <form id="checkoutForm">
+
+   <label>Full name *</label>
+
+   <input class="field" id="custName" required placeholder="Your full name">
+
+   <label>Phone number *</label>
+
+   <input class="field" id="custPhone" required type="tel" pattern="(09[0-9]{9}|\+639[0-9]{9})" placeholder="09XXXXXXXXX">
+
+   <label>Delivery address *</label>
+
+   <textarea class="field" id="custAddress" required rows="3" placeholder="House / building / street / barangay"></textarea>
+
+   <label>Additional instructions</label>
+
+   <textarea class="field" id="custNotes" rows="2" placeholder="Optional"></textarea>
+
+   <div class="panel">
+
+    <div class="total-row"><span>Payment method</span><b>Cash on Delivery</b></div>
+
+    <div class="total-row big"><span>Total</span><span id="checkoutTotal">₱0</span></div>
+
+   </div>
+
+   <button class="primary-btn" id="placeOrderBtn" type="submit" style="width:100%;margin:0">Place order</button>
+
+  </form>
+
+ </div>
+
+</div>
+
+<div id="successOverlay" class="overlay hidden">
+
+ <div class="modal" style="text-align:center">
+
+  <div style="font-size:65px;margin:15px">🎉</div>
+
+  <h2>Order placed!</h2>
+
+  <p class="muted">Thank you for ordering from Milktea KO.</p>
+
+  <div class="panel" style="text-align:left">
+
+   <p class="muted">Your order number</p>
+
+   <h2 id="successOrderNumber" style="color:var(--brown)">—</h2>
+
+   <p class="muted" style="margin-top:15px">Your private tracking code. Keep this safe!</p>
+
+   <p id="successToken" style="font-size:11px;word-break:break-all;font-weight:700"></p>
+
+  </div>
+
+  <p class="muted">Your order tracking has been saved on this device.</p>
+
+  <button class="primary-btn" onclick="finishOrder()" style="width:100%">View my order status</button>
+
+ </div>
+
+</div>
 
 <script>
+
+/* SUPABASE CONNECTION */
+
 const SUPABASE_URL="https://soejrrbvdjllbqtkfdqm.supabase.co";
+
 const SUPABASE_ANON_KEY="sb_publishable_wzFt1BdjWWTVlEdI6KfsYg_zHXLP6yq";
+
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-let products=[],cart=[],activeCategory='All',selectedProduct=null,selectedSize='',selectedSugar='100%',selectedIce='Regular Ice',selectedToppings=[],selectedQty=1;
+
+/* APP STATE */
+
+let products=[];
+
+let cart=[];
+
+let activeCategory='All';
+
+let selectedProduct=null;
+
+let selectedSize='';
+
+let selectedSugar='100%';
+
+let selectedIce='Regular Ice';
+
+let selectedToppings=[];
+
+let selectedQty=1;
+
+let trackingTimer=null;
+
 const peso=n=>'₱'+Number(n||0).toLocaleString('en-PH',{maximumFractionDigits:2});
+
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
 const nameOf=o=>typeof o==='string'?o:o?.name||'';
+
 const extraOf=o=>typeof o==='object'&&o?Number(o.price||0):0;
+
 const findOption=(arr,name)=>(arr||[]).find(x=>nameOf(x)===name);
+
 const options=(arr,fb=[])=>Array.isArray(arr)&&arr.length?arr:fb;
 
+/* PRODUCTS */
+
 async function loadProducts(){
+
  const grid=document.getElementById('productGrid');
+
  try{
-  const {data,error}=await db.from('products').select('*').eq('is_available',true).order('sort_order');
-  if(error)throw error;products=data||[];renderProducts();
- }catch(e){grid.innerHTML='<div class="empty">Unable to load drinks. Please refresh the page.</div>';console.error(e)}
+
+  const {data,error}=await db.from('products')
+
+   .select('*')
+
+   .eq('is_available',true)
+
+   .order('sort_order');
+
+  if(error)throw error;
+
+  products=data||[];
+
+  renderProducts();
+
+ }catch(e){
+
+  grid.innerHTML='<div class="empty">Unable to load drinks. Please refresh the page.</div>';
+
+  console.error(e);
+
+ }
+
 }
-function setCategory(c,b){activeCategory=c;document.querySelectorAll('.category').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderProducts()}
+
+function setCategory(c,b){
+
+ activeCategory=c;
+
+ document.querySelectorAll('.category').forEach(x=>x.classList.remove('active'));
+
+ b.classList.add('active');
+
+ renderProducts();
+
+}
+
 function renderProducts(){
+
  const q=document.getElementById('search').value.toLowerCase();
- const list=products.filter(p=>(p.name+' '+(p.description||'')+' '+(p.category||'')).toLowerCase().includes(q)&&(activeCategory==='All'||(activeCategory==='Best Sellers'?p.is_featured:p.category===activeCategory)));
+
+ const list=products.filter(p=>
+
+  (p.name+' '+(p.description||'')+' '+(p.category||'')).toLowerCase().includes(q)&&
+
+  (activeCategory==='All'||
+
+   (activeCategory==='Best Sellers'?p.is_featured:p.category===activeCategory))
+
+ );
+
  const grid=document.getElementById('productGrid');
- if(!list.length){grid.innerHTML='<div class="empty">No drinks found. Try another search.</div>';return}
- grid.innerHTML=list.map(p=>`<article class="product" onclick="openProduct('${p.id}')"><div class="product-image">${p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.name)}">`:'<span class="emoji">🧋</span>'}</div><div class="product-info">${p.is_featured?'<span class="badge">⭐ BEST SELLER</span>':''}<h3>${esc(p.name)}</h3><p>${esc(p.description||p.category||'Freshly made milk tea')}</p><div class="product-bottom"><span class="price">${peso(p.price)}</span><button class="add-small">+</button></div></div></article>`).join('');
+
+ if(!list.length){
+
+  grid.innerHTML='<div class="empty">No drinks found. Try another search.</div>';
+
+  return;
+
+ }
+
+ grid.innerHTML=list.map(p=>`
+
+  <article class="product" onclick="openProduct('${p.id}')">
+
+   <div class="product-image">
+
+    ${p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.name)}">`:'<span class="emoji">🧋</span>'}
+
+   </div>
+
+   <div class="product-info">
+
+    ${p.is_featured?'<span class="badge">⭐ BEST SELLER</span>':''}
+
+    <h3>${esc(p.name)}</h3>
+
+    <p>${esc(p.description||p.category||'Freshly made milk tea')}</p>
+
+    <div class="product-bottom">
+
+     <span class="price">${peso(p.price)}</span>
+
+     <button class="add-small">+</button>
+
+    </div>
+
+   </div>
+
+  </article>
+
+ `).join('');
+
 }
+
+/* PRODUCT CUSTOMIZATION */
+
 function openProduct(id){
- selectedProduct=products.find(p=>p.id===id);if(!selectedProduct)return;
- const p=selectedProduct;selectedSize=nameOf(options(p.sizes,['M'])[0]);selectedSugar=nameOf(options(p.sugar_levels,['100%'])[0]);selectedIce=nameOf(options(p.ice_levels,['Regular Ice'])[0]);selectedToppings=[];selectedQty=1;
- renderProductModal();document.getElementById('productOverlay').classList.remove('hidden');
+
+ selectedProduct=products.find(p=>p.id===id);
+
+ if(!selectedProduct)return;
+
+ const p=selectedProduct;
+
+ selectedSize=nameOf(options(p.sizes,['M'])[0]);
+
+ selectedSugar=nameOf(options(p.sugar_levels,['100%'])[0]);
+
+ selectedIce=nameOf(options(p.ice_levels,['Regular Ice'])[0]);
+
+ selectedToppings=[];
+
+ selectedQty=1;
+
+ renderProductModal();
+
+ document.getElementById('productOverlay').classList.remove('hidden');
+
 }
+
 function renderOptionGroup(title,arr,type,selected){
+
  if(!arr?.length)return '';
- return `<div class="option-title">${title}</div><div class="option-list">${arr.map(o=>{const n=nameOf(o),pr=extraOf(o);return `<button class="option ${selected===n?'selected':''}" onclick="chooseOption('${type}','${esc(n)}')">${esc(n)}${pr?' +'+peso(pr):''}</button>`}).join('')}</div>`;
+
+ return `
+
+  <div class="option-title">${title}</div>
+
+  <div class="option-list">
+
+   ${arr.map(o=>{
+
+    const n=nameOf(o),pr=extraOf(o);
+
+    return `<button class="option ${selected===n?'selected':''}" onclick="chooseOption('${type}','${esc(n)}')">${esc(n)}${pr?' +'+peso(pr):''}</button>`;
+
+   }).join('')}
+
+  </div>
+
+ `;
+
 }
+
 function renderProductModal(){
- const p=selectedProduct,sizes=options(p.sizes,['M','L']),toppings=options(p.toppings,[]),sugars=options(p.sugar_levels,['0%','25%','50%','75%','100%']),ices=options(p.ice_levels,['No Ice','Less Ice','Regular Ice']);
- document.getElementById('productModalContent').innerHTML=`<div class="modal-image">${p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.name)}">`:'<span class="emoji">🧋</span>'}</div><h2>${esc(p.name)}</h2><p class="muted">${esc(p.description||'A delicious drink made just for you.')}</p><div class="total-row"><b>Base price</b><b>${peso(p.price)}</b></div>${renderOptionGroup('Choose your size',sizes,'size',selectedSize)}${renderOptionGroup('Sugar level',sugars,'sugar',selectedSugar)}${renderOptionGroup('Ice level',ices,'ice',selectedIce)}${toppings.length?`<div class="option-title">Add toppings</div><div class="option-list">${toppings.map(o=>{const n=nameOf(o),pr=extraOf(o);return `<button class="option ${selectedToppings.includes(n)?'selected':''}" onclick="toggleTopping('${esc(n)}')">${esc(n)}${pr?' +'+peso(pr):''}</button>`}).join('')}</div>`:''}<div class="option-title">Quantity</div><div class="quantity"><button onclick="changeQty(-1)">−</button><b>${selectedQty}</b><button onclick="changeQty(1)">+</button></div><div class="modal-actions"><b class="price">${peso(currentUnit()*selectedQty)}</b><button class="primary-btn" onclick="addToCart()">Add to cart</button></div>`;
+
+ const p=selectedProduct;
+
+ const sizes=options(p.sizes,['M','L']);
+
+ const toppings=options(p.toppings,[]);
+
+ const sugars=options(p.sugar_levels,['0%','25%','50%','75%','100%']);
+
+ const ices=options(p.ice_levels,['No Ice','Less Ice','Regular Ice']);
+
+ document.getElementById('productModalContent').innerHTML=`
+
+  <div class="modal-image">
+
+   ${p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.name)}">`:'<span class="emoji">🧋</span>'}
+
+  </div>
+
+  <h2>${esc(p.name)}</h2>
+
+  <p class="muted">${esc(p.description||'A delicious drink made just for you.')}</p>
+
+  <div class="total-row"><b>Base price</b><b>${peso(p.price)}</b></div>
+
+  ${renderOptionGroup('Choose your size',sizes,'size',selectedSize)}
+
+  ${renderOptionGroup('Sugar level',sugars,'sugar',selectedSugar)}
+
+  ${renderOptionGroup('Ice level',ices,'ice',selectedIce)}
+
+  ${toppings.length?`
+
+   <div class="option-title">Add toppings</div>
+
+   <div class="option-list">
+
+    ${toppings.map(o=>{
+
+     const n=nameOf(o),pr=extraOf(o);
+
+     return `<button class="option ${selectedToppings.includes(n)?'selected':''}" onclick="toggleTopping('${esc(n)}')">${esc(n)}${pr?' +'+peso(pr):''}</button>`;
+
+    }).join('')}
+
+   </div>
+
+  `:''}
+
+  <div class="option-title">Quantity</div>
+
+  <div class="quantity">
+
+   <button onclick="changeQty(-1)">−</button>
+
+   <b>${selectedQty}</b>
+
+   <button onclick="changeQty(1)">+</button>
+
+  </div>
+
+  <div class="modal-actions">
+
+   <b class="price">${peso(currentUnit()*selectedQty)}</b>
+
+   <button class="primary-btn" onclick="addToCart()">Add to cart</button>
+
+  </div>
+
+ `;
+
 }
-function chooseOption(t,n){if(t==='size')selectedSize=n;if(t==='sugar')selectedSugar=n;if(t==='ice')selectedIce=n;renderProductModal()}
-function toggleTopping(n){selectedToppings=selectedToppings.includes(n)?selectedToppings.filter(x=>x!==n):[...selectedToppings,n];renderProductModal()}
-function changeQty(n){selectedQty=Math.max(1,Math.min(20,selectedQty+n));renderProductModal()}
-function currentUnit(){const p=selectedProduct;return Number(p.price||0)+extraOf(findOption(p.sizes,selectedSize))+selectedToppings.reduce((s,n)=>s+extraOf(findOption(p.toppings,n)),0)}
-function closeProduct(){document.getElementById('productOverlay').classList.add('hidden')}
+
+function chooseOption(t,n){
+
+ if(t==='size')selectedSize=n;
+
+ if(t==='sugar')selectedSugar=n;
+
+ if(t==='ice')selectedIce=n;
+
+ renderProductModal();
+
+}
+
+function toggleTopping(n){
+
+ selectedToppings=selectedToppings.includes(n)
+
+  ?selectedToppings.filter(x=>x!==n)
+
+  :[...selectedToppings,n];
+
+ renderProductModal();
+
+}
+
+function changeQty(n){
+
+ selectedQty=Math.max(1,Math.min(20,selectedQty+n));
+
+ renderProductModal();
+
+}
+
+function currentUnit(){
+
+ const p=selectedProduct;
+
+ return Number(p.price||0)+
+
+  extraOf(findOption(p.sizes,selectedSize))+
+
+  selectedToppings.reduce((s,n)=>s+extraOf(findOption(p.toppings,n)),0);
+
+}
+
+function closeProduct(){
+
+ document.getElementById('productOverlay').classList.add('hidden');
+
+}
+
+/* CART */
+
 function addToCart(){
- const p=selectedProduct;cart.push({key:crypto.randomUUID(),product_id:p.id,name:p.name,price:currentUnit(),size:selectedSize,sugar:selectedSugar,ice:selectedIce,toppings:[...selectedToppings],quantity:selectedQty});
- updateCartCount();closeProduct();showCart();
+
+ const p=selectedProduct;
+
+ cart.push({
+
+  key:crypto.randomUUID(),
+
+  product_id:p.id,
+
+  name:p.name,
+
+  price:currentUnit(),
+
+  size:selectedSize,
+
+  sugar:selectedSugar,
+
+  ice:selectedIce,
+
+  toppings:[...selectedToppings],
+
+  quantity:selectedQty
+
+ });
+
+ updateCartCount();
+
+ closeProduct();
+
+ showCart();
+
 }
-function updateCartCount(){document.getElementById('cartCount').textContent=cart.reduce((s,x)=>s+x.quantity,0)}
-function cartTotal(){return cart.reduce((s,x)=>s+x.price*x.quantity,0)}
-function showCart(){renderCart();document.getElementById('cartOverlay').classList.remove('hidden')}
-function closeCart(){document.getElementById('cartOverlay').classList.add('hidden')}
+
+function updateCartCount(){
+
+ document.getElementById('cartCount').textContent=
+
+  cart.reduce((s,x)=>s+x.quantity,0);
+
+}
+
+function cartTotal(){
+
+ return cart.reduce((s,x)=>s+x.price*x.quantity,0);
+
+}
+
+function showCart(){
+
+ renderCart();
+
+ document.getElementById('cartOverlay').classList.remove('hidden');
+
+}
+
+function closeCart(){
+
+ document.getElementById('cartOverlay').classList.add('hidden');
+
+}
+
 function renderCart(){
+
  const el=document.getElementById('cartContent');
- if(!cart.length){el.innerHTML='<div class="empty">Your cart is empty 🧋</div>';return}
- el.innerHTML=cart.map(x=>`<div class="cart-line"><div><b>${esc(x.name)}</b><div class="muted">${esc(x.size)} • ${esc(x.sugar)} sugar • ${esc(x.ice)}</div><div class="muted">${esc(x.toppings.join(', ')||'No toppings')}</div><b>${peso(x.price)} × ${x.quantity}</b></div><button onclick="removeCartItem('${x.key}')">Remove</button></div>`).join('')+`<div class="total-row big"><span>Total</span><span>${peso(cartTotal())}</span></div><button class="primary-btn" style="width:100%;margin:8px 0" onclick="openCheckout()">Proceed to checkout →</button>`;
+
+ if(!cart.length){
+
+  el.innerHTML='<div class="empty">Your cart is empty 🧋</div>';
+
+  return;
+
+ }
+
+ el.innerHTML=cart.map(x=>`
+
+  <div class="cart-line">
+
+   <div>
+
+    <b>${esc(x.name)}</b>
+
+    <div class="muted">${esc(x.size)} • ${esc(x.sugar)} sugar • ${esc(x.ice)}</div>
+
+    <div class="muted">${esc(x.toppings.join(', ')||'No toppings')}</div>
+
+    <b>${peso(x.price)} × ${x.quantity}</b>
+
+   </div>
+
+   <button onclick="removeCartItem('${x.key}')">Remove</button>
+
+  </div>
+
+ `).join('')+`
+
+  <div class="total-row big"><span>Total</span><span>${peso(cartTotal())}</span></div>
+
+  <button class="primary-btn" style="width:100%;margin:8px 0" onclick="openCheckout()">Proceed to checkout →</button>
+
+ `;
+
 }
-function removeCartItem(k){cart=cart.filter(x=>x.key!==k);updateCartCount();renderCart()}
-function openCheckout(){if(!cart.length)return;closeCart();document.getElementById('checkoutTotal').textContent=peso(cartTotal());document.getElementById('checkoutOverlay').classList.remove('hidden')}
-function closeCheckout(){document.getElementById('checkoutOverlay').classList.add('hidden')}
+
+function removeCartItem(k){
+
+ cart=cart.filter(x=>x.key!==k);
+
+ updateCartCount();
+
+ renderCart();
+
+}
+
+function openCheckout(){
+
+ if(!cart.length)return;
+
+ closeCart();
+
+ document.getElementById('checkoutTotal').textContent=peso(cartTotal());
+
+ document.getElementById('checkoutOverlay').classList.remove('hidden');
+
+}
+
+function closeCheckout(){
+
+ document.getElementById('checkoutOverlay').classList.add('hidden');
+
+}
+
+/* CHECKOUT AND ORDER SUBMISSION */
 
 document.getElementById('checkoutForm').addEventListener('submit',async e=>{
- e.preventDefault();if(!cart.length)return;
- const btn=document.getElementById('placeOrderBtn');btn.disabled=true;btn.textContent='Placing order...';
- const body={
-  customer_name:document.getElementById('custName').value.trim(),
-  customer_phone:document.getElementById('custPhone').value.trim(),
-  customer_email:null,
-  delivery_address:document.getElementById('custAddress').value.trim(),
-  notes:document.getElementById('custNotes').value.trim(),
-  items:cart.map(x=>({product_id:x.product_id,size:x.size,toppings:x.toppings,sugar:x.sugar,ice:x.ice,quantity:x.quantity}))
- };
- try{
-  const {data,error}=await db.functions.invoke('place-order',{body});
-  if(error)throw error;
-  const result=data?.order||data;
-  if(!result?.order_number||!result?.tracking_token)throw new Error(data?.error||'Order response was incomplete. Please contact the store before trying again.');
-  document.getElementById('successOrderNumber').textContent=result.order_number;
-  document.getElementById('successToken').textContent=result.tracking_token;
-  closeCheckout();document.getElementById('successOverlay').classList.remove('hidden');
-  cart=[];updateCartCount();
- }catch(err){alert('Hindi na-place ang order: '+(err.message||'Please try again.'));console.error(err)}
- finally{btn.disabled=false;btn.textContent='Place order'}
-});
-function finishOrder(){document.getElementById('successOverlay').classList.add('hidden');document.getElementById('checkoutForm').reset();window.scrollTo({top:0,behavior:'smooth'})}
 
-async function trackOrder(){
- const n=document.getElementById('trackNumber').value.trim(),t=document.getElementById('trackToken').value.trim(),out=document.getElementById('trackingResult');
- if(!n||!t){out.innerHTML='<p class="muted">Please enter both your order number and tracking code.</p>';return}
- out.innerHTML='<p class="muted">Checking your order...</p>';
+ e.preventDefault();
+
+ if(!cart.length)return;
+
+ const btn=document.getElementById('placeOrderBtn');
+
+ btn.disabled=true;
+
+ btn.textContent='Placing order...';
+
+ const body={
+
+  customer_name:document.getElementById('custName').value.trim(),
+
+  customer_phone:document.getElementById('custPhone').value.trim(),
+
+  customer_email:null,
+
+  delivery_address:document.getElementById('custAddress').value.trim(),
+
+  notes:document.getElementById('custNotes').value.trim(),
+
+  items:cart.map(x=>({
+
+   product_id:x.product_id,
+
+   size:x.size,
+
+   toppings:x.toppings,
+
+   sugar:x.sugar,
+
+   ice:x.ice,
+
+   quantity:x.quantity
+
+  }))
+
+ };
+
  try{
-  const {data,error}=await db.functions.invoke('track-order',{body:{order_number:n,tracking_token:t}});
+
+  const {data,error}=await db.functions.invoke('place-order',{body});
+
   if(error)throw error;
+
+  const result=data?.order||data;
+
+  if(!result?.order_number||!result?.tracking_token){
+
+   throw new Error(data?.error||'Order response was incomplete. Please contact the store before trying again.');
+
+  }
+
+  // Save the private tracking information on this device.
+
+  const savedOrder={
+
+   order_number:result.order_number,
+
+   tracking_token:result.tracking_token
+
+  };
+
+  localStorage.setItem('milktea_ko_last_order',JSON.stringify(savedOrder));
+
+  // Automatically fill tracking fields.
+
+  document.getElementById('trackNumber').value=result.order_number;
+
+  document.getElementById('trackToken').value=result.tracking_token;
+
+  document.getElementById('successOrderNumber').textContent=result.order_number;
+
+  document.getElementById('successToken').textContent=result.tracking_token;
+
+  closeCheckout();
+
+  document.getElementById('successOverlay').classList.remove('hidden');
+
+  cart=[];
+
+  updateCartCount();
+
+  // Start tracking immediately after a successful order.
+
+  trackOrder(result.order_number,result.tracking_token);
+
+ }catch(err){
+
+  alert('Hindi na-place ang order: '+(err.message||'Please try again.'));
+
+  console.error(err);
+
+ }finally{
+
+  btn.disabled=false;
+
+  btn.textContent='Place order';
+
+ }
+
+});
+
+/* AFTER ORDER SUCCESS */
+
+function finishOrder(){
+
+ document.getElementById('successOverlay').classList.add('hidden');
+
+ document.getElementById('checkoutForm').reset();
+
+ goToTracking();
+
+}
+
+/* TRACKING */
+
+function goToTracking(){
+
+ document.getElementById('trackingSection').scrollIntoView({behavior:'smooth'});
+
+ const saved=localStorage.getItem('milktea_ko_last_order');
+
+ if(saved){
+
+  try{
+
+   const order=JSON.parse(saved);
+
+   if(order.order_number&&order.tracking_token){
+
+    document.getElementById('trackNumber').value=order.order_number;
+
+    document.getElementById('trackToken').value=order.tracking_token;
+
+    trackOrder(order.order_number,order.tracking_token);
+
+   }
+
+  }catch(e){
+
+   console.error('Saved order could not be read:',e);
+
+  }
+
+ }
+
+}
+
+async function trackOrder(orderNumber,trackingToken){
+
+ const n=orderNumber||document.getElementById('trackNumber').value.trim();
+
+ const t=trackingToken||document.getElementById('trackToken').value.trim();
+
+ const out=document.getElementById('trackingResult');
+
+ const btn=document.getElementById('trackBtn');
+
+ if(!n||!t){
+
+  out.innerHTML='<p class="muted" style="margin-top:10px">Please enter both your order number and private tracking code.</p>';
+
+  return;
+
+ }
+
+ if(btn){
+
+  btn.disabled=true;
+
+  btn.textContent='Checking...';
+
+ }
+
+ out.innerHTML='<p class="muted" style="margin-top:10px">Checking your order...</p>';
+
+ try{
+
+  const {data,error}=await db.functions.invoke('track-order',{
+
+   body:{
+
+    order_number:n,
+
+    tracking_token:t
+
+   }
+
+  });
+
+  if(error)throw error;
+
   const o=data?.order||data;
-  if(!o||!o.status)throw new Error(data?.error||'Order not found. Check your details.');
-  out.innerHTML=`<div class="panel"><b>Order #${esc(o.order_number)}</b><h2 style="color:var(--green);margin:8px 0">${esc(o.status)}</h2><p class="muted">Last updated: ${o.updated_at?new Date(o.updated_at).toLocaleString():'—'}</p><p style="margin-top:8px">Total: <b>${peso(o.total)}</b></p></div>`;
- }catch(err){out.innerHTML=`<p style="color:#b34b36;margin-top:10px">${esc(err.message||'Unable to track order.')}</p>`}
+
+  if(!o||!o.status){
+
+   throw new Error(data?.error||'Order not found. Please check your details.');
+
+  }
+
+  const statusClass='status-'+String(o.status).toLowerCase().replace(/[^a-z]/g,'');
+
+  out.innerHTML=`
+
+   <div class="panel">
+
+    <p class="muted">Your order status</p>
+
+    <b>Order #${esc(o.order_number)}</b>
+
+    <h2 class="${statusClass}" style="margin:12px 0;font-size:25px">${esc(o.status)}</h2>
+
+    <p class="muted">Last updated: ${o.updated_at?new Date(o.updated_at).toLocaleString():'—'}</p>
+
+    <p style="margin-top:8px">Total: <b>${peso(o.total)}</b></p>
+
+    <p class="muted" style="margin-top:12px">This page checks your latest order status automatically.</p>
+
+   </div>
+
+  `;
+
+ }catch(err){
+
+  out.innerHTML=`
+
+   <div class="panel">
+
+    <p style="color:#b34b36">${esc(err.message||'Unable to track order.')}</p>
+
+   </div>
+
+  `;
+
+  console.error(err);
+
+ }finally{
+
+  if(btn){
+
+   btn.disabled=false;
+
+   btn.textContent='Track order';
+
+  }
+
+ }
+
 }
+
+/* RESTORE THE LAST ORDER ON THIS DEVICE */
+
+function restoreLastOrder(){
+
+ try{
+
+  const saved=localStorage.getItem('milktea_ko_last_order');
+
+  if(!saved)return;
+
+  const order=JSON.parse(saved);
+
+  if(!order.order_number||!order.tracking_token)return;
+
+  document.getElementById('trackNumber').value=order.order_number;
+
+  document.getElementById('trackToken').value=order.tracking_token;
+
+  // Automatically check the saved order.
+
+  trackOrder(order.order_number,order.tracking_token);
+
+ }catch(e){
+
+  console.error('Unable to restore last order:',e);
+
+ }
+
+}
+
+/* AUTOMATIC STATUS REFRESH */
+
+function startTrackingRefresh(){
+
+ if(trackingTimer)clearInterval(trackingTimer);
+
+ trackingTimer=setInterval(()=>{
+
+  const saved=localStorage.getItem('milktea_ko_last_order');
+
+  if(!saved)return;
+
+  try{
+
+   const order=JSON.parse(saved);
+
+   if(order.order_number&&order.tracking_token){
+
+    trackOrder(order.order_number,order.tracking_token);
+
+   }
+
+  }catch(e){
+
+   console.error(e);
+
+  }
+
+ },20000);
+
+}
+
+/* ONBOARDING */
+
 const onboardSteps=[
+
  ['🧋','Welcome to Milktea KO!','Your favorite milk tea is just a few taps away.'],
+
  ['✨','Make it your own','Choose your size, sugar level, ice, and toppings.'],
+
  ['🚀','Order and enjoy','Place your order and track it right here.']
+
 ];
+
 let onboardIndex=0;
+
 function showOnboardStep(){
- const s=onboardSteps[onboardIndex];document.getElementById('onEmoji').textContent=s[0];document.getElementById('onTitle').textContent=s[1];document.getElementById('onText').textContent=s[2];
- document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===onboardIndex));
- document.getElementById('onNext').textContent=onboardIndex===2?'Start ordering':'Continue';
+
+ const s=onboardSteps[onboardIndex];
+
+ document.getElementById('onEmoji').textContent=s[0];
+
+ document.getElementById('onTitle').textContent=s[1];
+
+ document.getElementById('onText').textContent=s[2];
+
+ document.querySelectorAll('.dot').forEach((d,i)=>{
+
+  d.classList.toggle('active',i===onboardIndex);
+
+ });
+
+ document.getElementById('onNext').textContent=
+
+  onboardIndex===2?'Start ordering':'Continue';
+
 }
+
 document.getElementById('onNext').onclick=()=>{
+
  onboardIndex++;
- if(onboardIndex>=3){localStorage.setItem('milktea_ko_onboarded','yes');document.getElementById('onboarding').classList.add('hidden')}
- else showOnboardStep();
+
+ if(onboardIndex>=3){
+
+  localStorage.setItem('milktea_ko_onboarded','yes');
+
+  document.getElementById('onboarding').classList.add('hidden');
+
+ }else{
+
+  showOnboardStep();
+
+ }
+
 };
+
+/* START APP */
+
 setTimeout(()=>{
+
  document.getElementById('splash').classList.add('hidden');
- if(!localStorage.getItem('milktea_ko_onboarded')){document.getElementById('onboarding').classList.remove('hidden');showOnboardStep()}
+
+ if(!localStorage.getItem('milktea_ko_onboarded')){
+
+  document.getElementById('onboarding').classList.remove('hidden');
+
+  showOnboardStep();
+
+ }
+
 },1600);
+
 loadProducts();
+
+restoreLastOrder();
+
+startTrackingRefresh();
+
 </script>
+
 </body>
+
 </html>
