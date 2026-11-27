@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,49 +8,64 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--brown:#6b3825;--dark:#40251b;--orange:#d98742;--cream:#fff8ed;--muted:#927d6e;--green:#45845c;--red:#b34b36}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark)}
-button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}
+:root{--brown:#6b3825;--dark:#40251b;--orange:#d98742;--cream:#fff8ed;--muted:#927d6e;--green:#45845c;--red:#b34b36;--ease:cubic-bezier(.22,1,.36,1)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:radial-gradient(circle at 0 0,#ffe9cc,transparent 40%),var(--cream);color:var(--dark)}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer;border:0;position:relative;overflow:hidden;transition:transform .2s var(--ease),box-shadow .2s,background .25s}
+button:hover{transform:translateY(-2px)}button:active{transform:scale(.94)}
+.ripple{position:absolute;border-radius:50%;background:#fff6;transform:scale(0);animation:rip .6s ease-out;pointer-events:none}
+@keyframes rip{to{transform:scale(4);opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 .hidden{display:none!important}
 .wrap{width:min(1150px,94%);margin:auto}
-header{background:var(--brown);color:white;padding:17px 0}
+header{background:linear-gradient(120deg,var(--brown),#8a4a2e);color:#fff;padding:17px 0;box-shadow:0 8px 24px #6b382533}
 .brand{font-family:Poppins;font-size:22px;font-weight:800}.brand span{color:#f0ad6c}
 header p{font-size:12px;opacity:.8}
 main{padding:25px 0}
-.card{background:white;border-radius:17px;padding:19px;margin:15px 0;box-shadow:0 6px 25px #4b2a1910}
-h2{font-family:Poppins;font-size:20px;margin-bottom:12px}
-h3{font-size:15px}
+.card{background:#fff;border-radius:20px;padding:19px;margin:15px 0;box-shadow:0 8px 28px #4b2a1912;animation:rise .5s var(--ease) both}
+h2{font-family:Poppins;font-size:20px;margin-bottom:12px}h3{font-size:15px}
 .muted{font-size:12px;color:var(--muted)}
-.field{width:100%;padding:12px;border:1px solid #e8d8c5;border-radius:11px;margin:6px 0 13px;outline:none;background:white}
-.field:focus{border-color:var(--orange)}
+.field{width:100%;padding:12px;border:1.5px solid #e8d8c5;border-radius:12px;margin:6px 0 13px;outline:none;background:#fff;transition:border .25s,box-shadow .25s}
+.field:focus{border-color:var(--orange);box-shadow:0 0 0 4px #d9874228}
 label{font-size:12px;font-weight:700}
-.btn{background:var(--brown);color:white;padding:11px 16px;border-radius:11px;font-weight:700}
-.btn.orange{background:var(--orange)}.btn.red{background:var(--red)}.btn.green{background:var(--green)}
-.btn.light{background:#f1e4d4;color:var(--brown)}
+.btn{background:linear-gradient(135deg,var(--brown),#8a4a2e);color:#fff;padding:11px 16px;border-radius:12px;font-weight:700;box-shadow:0 5px 14px #6b382533}
+.btn.orange{background:linear-gradient(135deg,var(--orange),#e89a58)}.btn.red{background:var(--red)}.btn.green{background:var(--green)}
+.btn.light{background:#f1e4d4;color:var(--brown);box-shadow:none}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
-.tab{padding:10px 17px;background:#efdfca;color:var(--brown);border-radius:10px;font-weight:700}
-.tab.active{background:var(--brown);color:white}
+.tab{padding:10px 17px;background:#efdfca;color:var(--brown);border-radius:12px;font-weight:700}
+.tab.active{background:linear-gradient(135deg,var(--brown),#8a4a2e);color:#fff}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.stat{background:#fff8ed;border-radius:13px;padding:16px}
-.stat b{display:block;font-size:24px;color:var(--brown);font-family:Poppins}
-.stat span{font-size:12px;color:var(--muted)}
+.stat{background:#fff;border-radius:16px;padding:16px;box-shadow:0 6px 20px #4b2a1910;transition:transform .3s var(--ease);animation:rise .5s var(--ease) both}
+.stat:hover{transform:translateY(-4px)}
+.stat b{display:block;font-size:24px;color:var(--brown);font-family:Poppins}.stat span{font-size:12px;color:var(--muted)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.product-row,.order-row{border:1px solid #f0e4d7;border-radius:13px;padding:13px;margin:10px 0;display:flex;gap:12px;align-items:center}
-.thumb{width:75px;height:75px;border-radius:11px;object-fit:cover;background:#f1dfc8;flex-shrink:0}
-.product-row .info,.order-row .info{flex:1;min-width:0}
+.product-row,.order-row{border:1px solid #f0e4d7;border-radius:15px;padding:13px;margin:10px 0;display:flex;gap:12px;align-items:center;background:#fff;transition:transform .3s var(--ease),box-shadow .3s;animation:rise .45s var(--ease) both}
+.product-row:hover,.order-row:hover{transform:translateY(-3px);box-shadow:0 10px 24px #4b2a1914}
+.thumb{width:75px;height:75px;border-radius:12px;object-fit:cover;background:#f1dfc8;flex-shrink:0}
+.info{flex:1;min-width:0}
 .product-row p,.order-row p{font-size:12px;color:var(--muted);margin:4px 0}
 .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
 .actions button{font-size:11px;padding:8px 10px}
-.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#e4f2e8;color:#34744c;font-size:10px;font-weight:700}
+.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#e4f2e8;color:#34744c;font-size:10px;font-weight:700;transition:.3s}
 .pill.off{background:#f8e4df;color:#a44232}
+.pill.st-Pending{background:#fbeccd;color:#a66a16}.pill.st-Confirmed{background:#dcebf6;color:#2675a5}.pill.st-Preparing{background:#fde5cf;color:#b36b22}.pill.st-Ready,.pill.st-Completed{background:#e4f2e8;color:#34744c}.pill.st-Cancelled{background:#f8e4df;color:#a44232}
+/* Completed / cancelled orders fade out */
+.order-row.done{opacity:.5;filter:grayscale(.7);transition:opacity .6s,filter .6s}
+.order-row.done:hover{opacity:.85;filter:none}
+.order-row.fade-out{animation:fadeOut .8s ease forwards;overflow:hidden}
+@keyframes fadeOut{0%{opacity:1}40%{opacity:.5;transform:scale(.98)}100%{opacity:0;transform:translateX(30px) scale(.95);max-height:0;padding-top:0;padding-bottom:0;margin:0;border-width:0}}
 .preview{width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin:8px 0}
-@media(max-width:650px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:11px}.stat b{font-size:19px}.product-row,.order-row{align-items:flex-start}.thumb{width:65px;height:65px}}
+#toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,30px);background:var(--dark);color:#fff;padding:12px 20px;border-radius:30px;font-size:13px;z-index:200;opacity:0;pointer-events:none;transition:.4s var(--ease)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.stat{padding:11px}.stat b{font-size:19px}.product-row,.order-row{align-items:flex-start}.thumb{width:65px;height:65px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <header><div class="wrap"><div class="brand">MILKTEA <span>KO.</span> ADMIN</div><p>Manage your drinks and customer orders</p></div></header>
+<div id="toast"></div>
 <main class="wrap">
 <section id="loginSection" class="card" style="max-width:430px;margin:35px auto">
  <h2>Admin Login 🔐</h2><p class="muted">Sign in using your authorized admin account.</p>
@@ -62,7 +76,6 @@ label{font-size:12px;font-weight:700}
  </form>
  <p id="loginMessage" class="muted" style="margin-top:12px"></p>
 </section>
-
 <section id="dashboard" class="hidden">
  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
   <div><h2>Dashboard</h2><p class="muted" id="adminEmail"></p></div>
@@ -77,7 +90,6 @@ label{font-size:12px;font-weight:700}
   <button class="tab active" onclick="showTab('products',this)">Products</button>
   <button class="tab" onclick="showTab('orders',this)">Orders</button>
  </div>
-
  <section id="productsTab">
   <div class="card">
    <h2 id="formTitle">Add New Drink 🧋</h2>
@@ -95,7 +107,7 @@ label{font-size:12px;font-weight:700}
     <label>Toppings and extra prices</label><input class="field" id="pToppings" placeholder="Pearls:10, Pudding:15, Cream Cheese:20">
     <label>Sugar levels</label><input class="field" id="pSugar" placeholder="0%, 25%, 50%, 75%, 100%">
     <label>Ice levels</label><input class="field" id="pIce" placeholder="No Ice, Less Ice, Regular Ice">
-    <label>Product image</label><input class="field" id="pImage" type="file" accept="image/*">
+    <label>Product image (JPG, PNG o WEBP — auto-resize para mabilis)</label><input class="field" id="pImage" type="file" accept="image/*">
     <img id="imagePreview" class="preview hidden" alt="Image preview">
     <div style="display:flex;gap:15px;flex-wrap:wrap;margin:7px 0 15px">
      <label><input type="checkbox" id="pAvailable" checked> Available</label>
@@ -108,36 +120,30 @@ label{font-size:12px;font-weight:700}
   </div>
   <div class="card"><h2>Your Products</h2><div id="productsList">Loading...</div></div>
  </section>
-
  <section id="ordersTab" class="hidden">
-  <div class="card"><h2>Customer Orders 📦</h2><button class="btn light" onclick="loadOrders()">Refresh orders</button><div id="ordersList" style="margin-top:12px">Loading...</div></div>
+  <div class="card"><h2>Customer Orders 📦</h2>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn light" onclick="loadOrders()">Refresh orders</button><button class="btn light" id="toggleDoneBtn" onclick="toggleDone()">Show completed (0)</button></div>
+   <div id="ordersList" style="margin-top:12px">Loading...</div></div>
  </section>
 </section>
 </main>
-
 <script>
 const SUPABASE_URL="https://soejrrbvdjllbqtkfdqm.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_wzFt1BdjWWTVlEdI6KfsYg_zHXLP6yq";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-let currentUser=null,products=[],orders=[],editingImageUrl=null,ordersChannel=null;
+let currentUser=null,products=[],orders=[],editingImageUrl=null,ordersChannel=null,showDone=false;
+const DONE=['Completed','Cancelled'];
 const $=id=>document.getElementById(id);
 const peso=n=>'₱'+Number(n||0).toLocaleString('en-PH',{maximumFractionDigits:2});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nameOf=o=>typeof o==='string'?o:o?.name||'';
-const extraOf=o=>typeof o==='object'&&o?Number(o.price||0):0;
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b)return;const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height)/2,d=document.createElement('span');d.className='ripple';d.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;b.appendChild(d);setTimeout(()=>d.remove(),600)});
+let toastT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2000)}
 function parseOptions(value){
- return value.split(',').map(x=>x.trim()).filter(Boolean).map(x=>{
-  const i=x.lastIndexOf(':');
-  if(i<0)return {name:x,price:0};
-  const name=x.slice(0,i).trim(),price=Number(x.slice(i+1).trim());
-  return {name,price:Number.isFinite(price)&&price>=0?price:0};
- }).filter(x=>x.name);
+ return value.split(',').map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.lastIndexOf(':');if(i<0)return {name:x,price:0};const name=x.slice(0,i).trim(),price=Number(x.slice(i+1).trim());return {name,price:Number.isFinite(price)&&price>=0?price:0}}).filter(x=>x.name);
 }
-function formatOptions(arr){
- return (arr||[]).map(x=>typeof x==='string'?x:`${x.name}:${Number(x.price||0)}`).join(', ');
-}
+function formatOptions(arr){return (arr||[]).map(x=>typeof x==='string'?x:`${x.name}:${Number(x.price||0)}`).join(', ')}
 function formatPlainOptions(arr){return (arr||[]).map(nameOf).join(', ')}
-
 async function checkAdmin(){
  const {data:{session}}=await db.auth.getSession();
  if(!session){showLogin();return}
@@ -145,49 +151,19 @@ async function checkAdmin(){
  const {data,error}=await db.from('admin_users').select('user_id').eq('user_id',currentUser.id).maybeSingle();
  if(error||!data){await db.auth.signOut();showLogin('This account is not authorized as an admin.');return}
  $('loginSection').classList.add('hidden');$('dashboard').classList.remove('hidden');$('adminEmail').textContent=currentUser.email;
- await refreshDashboard();
-subscribeToOrders();
+ await loadProducts();await loadOrders();subscribeToOrders();
 }
-function showLogin(message=''){
- $('loginSection').classList.remove('hidden');$('dashboard').classList.add('hidden');$('loginMessage').textContent=message;
-}
+function showLogin(message=''){$('loginSection').classList.remove('hidden');$('dashboard').classList.add('hidden');$('loginMessage').textContent=message}
 $('loginForm').addEventListener('submit',async e=>{
  e.preventDefault();const btn=$('loginBtn');btn.disabled=true;btn.textContent='Signing in...';
- try{
-  const {error}=await db.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});
-  if(error)throw error;await checkAdmin();
- }catch(err){$('loginMessage').textContent=err.message}
+ try{const {error}=await db.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error)throw error;await checkAdmin()}
+ catch(err){$('loginMessage').textContent=err.message}
  finally{btn.disabled=false;btn.textContent='Login'}
 });
-async function logout(){
-  if(ordersChannel){
-    await db.removeChannel(ordersChannel);
-    ordersChannel=null;
-  }
-  await db.auth.signOut();
-  showLogin('You have signed out.');
-}
-
+async function logout(){if(ordersChannel){await db.removeChannel(ordersChannel);ordersChannel=null}await db.auth.signOut();showLogin('You have signed out.')}
 function subscribeToOrders(){
-  if(ordersChannel) db.removeChannel(ordersChannel);
-
-  ordersChannel=db.channel('milktea-ko-admin-orders')
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'orders'
-      },
-      ()=>{
-        loadOrders();
-      }
-    )
-    .subscribe(status=>{
-      if(status==='SUBSCRIBED'){
-        loadOrders();
-      }
-    });
+ if(ordersChannel)db.removeChannel(ordersChannel);
+ ordersChannel=db.channel('milktea-ko-admin-orders').on('postgres_changes',{event:'*',schema:'public',table:'orders'},()=>{if(!fadingBusy)loadOrders()}).subscribe(s=>{if(s==='SUBSCRIBED')loadOrders()});
 }
 function showTab(tab,btn){
  $('productsTab').classList.toggle('hidden',tab!=='products');$('ordersTab').classList.toggle('hidden',tab!=='orders');
@@ -197,8 +173,8 @@ async function loadProducts(){
  const {data,error}=await db.from('products').select('*').order('sort_order');
  if(error){$('productsList').textContent=error.message;return}
  products=data||[];$('productCount').textContent=products.length;
- $('productsList').innerHTML=products.length?products.map(p=>`
-  <div class="product-row">
+ $('productsList').innerHTML=products.length?products.map((p,i)=>`
+  <div class="product-row" style="animation-delay:${Math.min(i,10)*50}ms">
    ${p.image_url?`<img class="thumb" src="${esc(p.image_url)}" alt="">`:'<div class="thumb" style="display:grid;place-items:center;font-size:30px">🧋</div>'}
    <div class="info"><h3>${esc(p.name)}</h3><p>${esc(p.category||'')} • ${peso(p.price)}</p>
    <span class="pill ${p.is_available?'':'off'}">${p.is_available?'Available':'Sold Out'}</span>${p.is_featured?' <span class="pill">Best Seller</span>':''}
@@ -208,37 +184,37 @@ async function loadProducts(){
 $('pImage').addEventListener('change',()=>{
  const f=$('pImage').files[0];if(!f)return;
  if(!f.type.startsWith('image/')){alert('Please select an image file.');$('pImage').value='';return}
- const url=URL.createObjectURL(f);$('imagePreview').src=url;$('imagePreview').classList.remove('hidden');
+ $('imagePreview').src=URL.createObjectURL(f);$('imagePreview').classList.remove('hidden');
 });
+async function compressImage(file){
+ const bmp=await createImageBitmap(file).catch(()=>{throw new Error('Hindi mabasa ang picture. Gumamit ng JPG, PNG o WEBP.')});
+ const max=1000,r=Math.min(1,max/Math.max(bmp.width,bmp.height));
+ const c=document.createElement('canvas');c.width=Math.round(bmp.width*r);c.height=Math.round(bmp.height*r);
+ const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(bmp,0,0,c.width,c.height);
+ return await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('Hindi ma-compress ang picture.')),'image/jpeg',.85));
+}
 async function uploadImage(file){
- const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
- const path=`products/${crypto.randomUUID()}.${ext||'jpg'}`;
- const {error}=await db.storage.from('product-images').upload(path,file,{upsert:false,contentType:file.type});
+ const blob=await compressImage(file);
+ const path=`products/${crypto.randomUUID()}.jpg`;
+ const {error}=await db.storage.from('product-images').upload(path,blob,{upsert:false,contentType:'image/jpeg'});
  if(error)throw error;
- const {data}=db.storage.from('product-images').getPublicUrl(path);
- return data.publicUrl;
+ return db.storage.from('product-images').getPublicUrl(path).data.publicUrl;
 }
 $('productForm').addEventListener('submit',async e=>{
- e.preventDefault();const btn=$('saveProductBtn');btn.disabled=true;btn.textContent='Saving...';$('productMessage').textContent='';
+ e.preventDefault();const btn=$('saveProductBtn');btn.disabled=true;btn.textContent=$('pImage').files[0]?'Uploading picture...':'Saving...';$('productMessage').textContent='';
  try{
-  const file=$('pImage').files[0];let imageUrl=editingImageUrl;
-  if(file)imageUrl=await uploadImage(file);
+  const file=$('pImage').files[0];let imageUrl=editingImageUrl;if(file)imageUrl=await uploadImage(file);
   const sizes=parseOptions($('pSizes').value),toppings=parseOptions($('pToppings').value);
   if(!sizes.length)throw new Error('Please enter at least one size.');
-  const payload={
-   name:$('pName').value.trim(),description:$('pDescription').value.trim(),
-   category:$('pCategory').value,price:Number($('pPrice').value),
-   sizes,toppings,
+  const payload={name:$('pName').value.trim(),description:$('pDescription').value.trim(),category:$('pCategory').value,price:Number($('pPrice').value),sizes,toppings,
    sugar_levels:$('pSugar').value.split(',').map(x=>x.trim()).filter(Boolean).map(name=>({name,price:0})),
    ice_levels:$('pIce').value.split(',').map(x=>x.trim()).filter(Boolean).map(name=>({name,price:0})),
-   image_url:imageUrl,is_available:$('pAvailable').checked,is_featured:$('pFeatured').checked,
-   sort_order:Number($('pSort').value)||0,updated_at:new Date().toISOString()
-  };
+   image_url:imageUrl,is_available:$('pAvailable').checked,is_featured:$('pFeatured').checked,sort_order:Number($('pSort').value)||0,updated_at:new Date().toISOString()};
   if(!payload.name||!Number.isFinite(payload.price)||payload.price<0)throw new Error('Check product name and price.');
   const id=$('productId').value;
   const result=id?await db.from('products').update(payload).eq('id',id):await db.from('products').insert(payload);
   if(result.error)throw result.error;
-  $('productMessage').textContent='Product saved successfully!';resetForm();await loadProducts();
+  $('productMessage').textContent='Product saved successfully!';toast('✅ Product saved!');resetForm();await loadProducts();
  }catch(err){$('productMessage').textContent='Error: '+err.message;console.error(err)}
  finally{btn.disabled=false;btn.textContent='Save Product'}
 });
@@ -266,33 +242,44 @@ async function deleteProduct(id){
  const {error}=await db.from('products').delete().eq('id',id);
  if(error){alert(error.message);return}await loadProducts();
 }
+/* ORDERS: completed/cancelled fade out */
+let fadingBusy=false;
+function toggleDone(){showDone=!showDone;renderOrders()}
 async function loadOrders(){
  const {data,error}=await db.from('orders').select('*').order('created_at',{ascending:false}).limit(100);
  if(error){$('ordersList').textContent=error.message;return}
- orders=data||[];$('orderCount').textContent=orders.length;$('pendingCount').textContent=orders.filter(o=>o.status==='Pending').length;
- $('ordersList').innerHTML=orders.length?orders.map(o=>{
+ orders=data||[];renderOrders();
+}
+function renderOrders(){
+ $('orderCount').textContent=orders.length;$('pendingCount').textContent=orders.filter(o=>o.status==='Pending').length;
+ const doneCount=orders.filter(o=>DONE.includes(o.status)).length;
+ $('toggleDoneBtn').textContent=(showDone?'Hide completed (':'Show completed (')+doneCount+')';
+ const list=orders.filter(o=>showDone||!DONE.includes(o.status));
+ $('ordersList').innerHTML=list.length?list.map((o,i)=>{
   const items=Array.isArray(o.items)?o.items:[];
-  return `<div class="order-row"><div class="info">
-   <h3>Order #${esc(o.order_number)} <span class="pill">${esc(o.status)}</span></h3>
+  return `<div class="order-row ${DONE.includes(o.status)?'done':''}" id="row-${o.id}" style="animation-delay:${Math.min(i,10)*40}ms"><div class="info">
+   <h3>Order #${esc(o.order_number)} <span class="pill st-${esc(o.status)}">${esc(o.status)}</span></h3>
    <p><b>${esc(o.customer_name||'Customer')}</b> • ${esc(o.customer_phone||'')}</p>
    <p>${esc(o.delivery_address||'')}</p>
    <p>${items.map(i=>`${esc(i.quantity)}× ${esc(i.name||i.product_name||'Drink')} (${esc(i.size||'')})`).join('<br>')}</p>
    <p>Payment: ${esc(o.payment_method||'Cash on Delivery')} • <b>${peso(o.total)}</b></p>
    <p>${o.created_at?new Date(o.created_at).toLocaleString():''}</p>
    <div class="actions">
-    <select class="field" style="width:auto;min-width:145px;margin:0" id="status-${o.id}">
-     ${['Pending','Confirmed','Preparing','Ready','Completed','Cancelled'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}
-    </select>
+    <select class="field" style="width:auto;min-width:145px;margin:0" id="status-${o.id}">${['Pending','Confirmed','Preparing','Ready','Completed','Cancelled'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}</select>
     <button class="btn orange" onclick="updateOrderStatus('${o.id}')">Update Status</button>
-   </div>
-  </div></div>`;
- }).join(''):'<p class="muted">No orders yet.</p>';
+   </div></div></div>`;
+ }).join(''):'<p class="muted">No active orders. 🎉</p>';
 }
 async function updateOrderStatus(id){
  const status=$('status-'+id).value;
  const {error}=await db.from('orders').update({status,updated_at:new Date().toISOString()}).eq('id',id);
  if(error){alert('Could not update order: '+error.message);return}
- alert('Order status updated.');await loadOrders();
+ const o=orders.find(x=>x.id===id);if(o)o.status=status;
+ const row=$('row-'+id);
+ if(DONE.includes(status)&&row&&!showDone){
+  fadingBusy=true;row.classList.add('fade-out');toast(status==='Completed'?'✅ Order completed!':'Order cancelled');
+  setTimeout(()=>{fadingBusy=false;renderOrders()},800);
+ }else{toast('Order status updated.');renderOrders()}
 }
 checkAdmin();
 </script>
