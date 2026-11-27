@@ -1,0 +1,507 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Milktea KO - Admin Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#ff7900;--cream:#fff8ed;--dark:#292016;--muted:#887e72}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--dark);font-family:Nunito,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0}
+header{background:white;padding:15px 5%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 15px #39240d10;position:sticky;top:0;z-index:5}
+.brand{font-size:21px;font-weight:900}.brand span{color:var(--orange)}
+a{color:inherit;text-decoration:none}
+main{width:92%;max-width:1100px;margin:28px auto}
+.panel{background:white;padding:23px;border-radius:20px;box-shadow:0 10px 30px #462b0f10;margin-bottom:20px}
+.hidden{display:none!important}
+h1{font-size:27px;margin:0 0 6px}h2{margin:0 0 15px}
+.muted{color:var(--muted)}
+.btn{background:var(--orange);color:white;padding:11px 17px;border-radius:12px;font-weight:900}
+.btn.secondary{background:#fff0dc;color:var(--dark)}
+.btn.danger{background:#b63d32}
+.field{margin:12px 0}
+.field label{display:block;font-weight:900;font-size:13px;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #e9ddce;border-radius:11px;background:#fffdf9}
+.field textarea{min-height:75px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tabs,.actions{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}
+.tabs button{padding:10px 16px;border-radius:11px;background:#fff0dc;font-weight:900}
+.tabs button.active{background:var(--orange);color:white}
+.card{border:1px solid #eee2d5;border-radius:15px;padding:15px;margin:12px 0}
+.card p{font-size:14px;color:var(--muted);margin:5px 0}
+.preview{width:76px;height:76px;object-fit:cover;border-radius:12px;background:#fff0dc}
+.product-head{display:flex;gap:12px;align-items:center}
+.stat{display:inline-block;background:#fff4e7;border-radius:13px;padding:12px 16px;margin:5px;font-weight:900}
+#message{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#292016;color:white;padding:12px 18px;border-radius:12px;display:none;z-index:10;max-width:90%;text-align:center}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.panel{padding:17px}header{padding:13px 4%}}
+</style>
+</head>
+<body>
+<div id="message"></div>
+<header>
+  <div class="brand">🧋 Milktea <span>KO</span> Admin</div>
+  <a href="./index.html" class="muted">← Customer Store</a>
+</header>
+
+<main>
+<section class="panel" id="loginPanel">
+  <h1>Admin Login 🔐</h1>
+  <p class="muted">Sign in using your authorized admin account.</p>
+  <form id="loginForm">
+    <div class="field">
+      <label>Email</label>
+      <input id="email" type="email" required autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input id="password" type="password" required autocomplete="current-password">
+    </div>
+    <button class="btn" id="loginButton">Login to Dashboard</button>
+  </form>
+</section>
+
+<section id="dashboard" class="hidden">
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+      <div>
+        <h1>Dashboard ⚙️</h1>
+        <p class="muted">Manage drinks, photos, availability and orders.</p>
+      </div>
+      <button class="btn secondary" id="logoutButton">Logout</button>
+    </div>
+    <div id="stats"></div>
+    <div class="tabs">
+      <button class="active" data-tab="products">🥤 Products</button>
+      <button data-tab="orders">🧾 Orders</button>
+    </div>
+  </div>
+
+  <div id="productsTab">
+    <div class="panel">
+      <h2 id="formTitle">Add New Drink</h2>
+      <form id="productForm">
+        <input type="hidden" id="productId">
+
+        <div class="grid">
+          <div class="field">
+            <label>Drink Name *</label>
+            <input id="name" required placeholder="Example: Wintermelon Milk Tea">
+          </div>
+          <div class="field">
+            <label>Price (₱) *</label>
+            <input id="price" type="number" min="1" step="0.01" required>
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <select id="category">
+              <option>Classic</option>
+              <option>Fruit Tea</option>
+              <option>Specialty</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Product Photo</label>
+            <input id="photo" type="file" accept="image/*">
+            <small class="muted">Choose a photo from your phone.</small>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Description</label>
+          <textarea id="description" placeholder="Describe your drink..."></textarea>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label>Sizes (comma-separated)</label>
+            <input id="sizes" value="M,L">
+          </div>
+          <div class="field">
+            <label>Toppings (comma-separated)</label>
+            <input id="toppings" value="Pearls,Pudding,Cream Cheese">
+          </div>
+          <div class="field">
+            <label>Sugar Levels</label>
+            <input id="sugars" value="0%,25%,50%,75%,100%">
+          </div>
+          <div class="field">
+            <label>Ice Levels</label>
+            <input id="ices" value="No Ice,Less Ice,Regular Ice">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>
+            <input id="available" type="checkbox" checked style="width:auto">
+            Available for customers
+          </label>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="saveButton">Save Product</button>
+          <button class="btn secondary hidden" type="button" id="cancelEdit">Cancel Edit</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>All Products</h2>
+      <div id="productList">Loading products...</div>
+    </div>
+  </div>
+
+  <div id="ordersTab" class="hidden">
+    <div class="panel">
+      <h2>Customer Orders</h2>
+      <button class="btn secondary" id="refreshOrders">Refresh Orders</button>
+      <div id="orderList">Loading orders...</div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+/* SUPABASE CONNECTION */
+const SUPABASE_URL = "https://soejrrbvdjllbqtkfdqm.supabase.co";
+const SUPABASE_KEY = "sb_publishable_wzFt1BdjWWTVlEdI6KfsYg_zHXLP6yq";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = id => document.getElementById(id);
+const money = n => "₱" + Number(n || 0).toFixed(2);
+
+let products = [];
+
+function message(text) {
+  $("message").textContent = text;
+  $("message").style.display = "block";
+  setTimeout(() => $("message").style.display = "none", 3000);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  }[c]));
+}
+
+function csvList(value) {
+  return value.split(",").map(x => x.trim()).filter(Boolean);
+}
+
+/* ADMIN LOGIN */
+$("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  $("loginButton").disabled = true;
+  $("loginButton").textContent = "Logging in...";
+
+  try {
+    const { data, error } = await db.auth.signInWithPassword({
+      email: $("email").value.trim(),
+      password: $("password").value
+    });
+
+    if (error) throw error;
+
+    const { data: member, error: memberError } = await db
+      .from("admin_users")
+      .select("user_id")
+      .eq("user_id", data.user.id)
+      .maybeSingle();
+
+    if (memberError || !member) {
+      await db.auth.signOut();
+      throw new Error("This account is not authorized as an admin.");
+    }
+
+    $("loginPanel").classList.add("hidden");
+    $("dashboard").classList.remove("hidden");
+    await refreshDashboard();
+
+  } catch (error) {
+    message(error.message);
+  } finally {
+    $("loginButton").disabled = false;
+    $("loginButton").textContent = "Login to Dashboard";
+  }
+});
+
+$("logoutButton").onclick = async () => {
+  await db.auth.signOut();
+  location.reload();
+};
+
+/* DASHBOARD TABS */
+document.querySelectorAll("[data-tab]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("[data-tab]").forEach(b =>
+      b.classList.toggle("active", b === button)
+    );
+
+    $("productsTab").classList.toggle("hidden", button.dataset.tab !== "products");
+    $("ordersTab").classList.toggle("hidden", button.dataset.tab !== "orders");
+
+    if (button.dataset.tab === "orders") loadOrders();
+    else loadProducts();
+  });
+});
+
+async function refreshDashboard() {
+  await loadProducts();
+  const { count, error } = await db
+    .from("orders")
+    .select("*", { count:"exact", head:true });
+
+  $("stats").innerHTML =
+    '<span class="stat">🥤 Products: ' + products.length + '</span>' +
+    '<span class="stat">🧾 Orders: ' + (error ? "—" : count || 0) + '</span>';
+}
+
+/* PRODUCTS */
+async function loadProducts() {
+  $("productList").textContent = "Loading products...";
+
+  const { data, error } = await db
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending:false });
+
+  if (error) {
+    $("productList").textContent = error.message;
+    return;
+  }
+
+  products = data || [];
+
+  if (!products.length) {
+    $("productList").innerHTML = '<p class="muted">No products yet. Add your first drink above.</p>';
+    return;
+  }
+
+  $("productList").innerHTML = products.map(p => `
+    <div class="card">
+      <div class="product-head">
+        ${
+          p.image_url
+          ? `<img class="preview" src="${escapeHTML(p.image_url)}" alt="">`
+          : `<div class="preview" style="display:grid;place-items:center;font-size:30px">🧋</div>`
+        }
+        <div>
+          <b>${escapeHTML(p.name)}</b>
+          <p>${money(p.price)} · ${escapeHTML(p.category || "")}</p>
+          <p>${p.is_available ? "🟢 Available" : "🔴 Sold Out"}</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn secondary" onclick="editProduct('${p.id}')">Edit</button>
+        <button class="btn secondary" onclick="toggleProduct('${p.id}',${!!p.is_available})">
+          ${p.is_available ? "Mark Sold Out" : "Make Available"}
+        </button>
+        <button class="btn danger" onclick="deleteProduct('${p.id}')">Delete</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* ADD OR UPDATE PRODUCT */
+$("productForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const saveButton = $("saveButton");
+  saveButton.disabled = true;
+  saveButton.textContent = "Saving...";
+
+  try {
+    const id = $("productId").value;
+    const existing = products.find(p => p.id === id);
+    const file = $("photo").files[0];
+
+    let imageURL = existing?.image_url || null;
+
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        throw new Error("Please select an image file.");
+      }
+
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const filePath = Date.now() + "-" + safeName;
+
+      const { error: uploadError } = await db.storage
+        .from("product-images")
+        .upload(filePath, file, {
+          contentType:file.type,
+          cacheControl:"3600",
+          upsert:false
+        });
+
+      if (uploadError) throw uploadError;
+
+      imageURL = db.storage
+        .from("product-images")
+        .getPublicUrl(filePath).data.publicUrl;
+    }
+
+    const product = {
+      name: $("name").value.trim(),
+      price: Number($("price").value),
+      category: $("category").value,
+      description: $("description").value.trim(),
+      image_url: imageURL,
+      sizes: csvList($("sizes").value),
+      toppings: csvList($("toppings").value),
+      sugar_levels: csvList($("sugars").value),
+      ice_levels: csvList($("ices").value),
+      is_available: $("available").checked,
+      is_featured: existing?.is_featured || false,
+      sort_order: existing?.sort_order || 0
+    };
+
+    const result = id
+      ? await db.from("products").update(product).eq("id", id)
+      : await db.from("products").insert(product);
+
+    if (result.error) throw result.error;
+
+    message(id ? "Product updated successfully!" : "New product added!");
+    resetProductForm();
+    await loadProducts();
+    await refreshDashboard();
+
+  } catch (error) {
+    message(error.message);
+  } finally {
+    saveButton.disabled = false;
+    saveButton.textContent = $("productId").value ? "Update Product" : "Save Product";
+  }
+});
+
+/* EDIT PRODUCT */
+window.editProduct = id => {
+  const p = products.find(item => item.id === id);
+  if (!p) return;
+
+  $("productId").value = p.id;
+  $("name").value = p.name || "";
+  $("price").value = p.price || "";
+  $("category").value = p.category || "Classic";
+  $("description").value = p.description || "";
+  $("sizes").value = (p.sizes || []).join(",");
+  $("toppings").value = (p.toppings || []).join(",");
+  $("sugars").value = (p.sugar_levels || []).join(",");
+  $("ices").value = (p.ice_levels || []).join(",");
+  $("available").checked = !!p.is_available;
+
+  $("formTitle").textContent = "Edit Drink";
+  $("saveButton").textContent = "Update Product";
+  $("cancelEdit").classList.remove("hidden");
+  window.scrollTo({ top:0, behavior:"smooth" });
+};
+
+function resetProductForm() {
+  $("productForm").reset();
+  $("productId").value = "";
+  $("sizes").value = "M,L";
+  $("toppings").value = "Pearls,Pudding,Cream Cheese";
+  $("sugars").value = "0%,25%,50%,75%,100%";
+  $("ices").value = "No Ice,Less Ice,Regular Ice";
+  $("available").checked = true;
+  $("formTitle").textContent = "Add New Drink";
+  $("saveButton").textContent = "Save Product";
+  $("cancelEdit").classList.add("hidden");
+}
+
+$("cancelEdit").onclick = resetProductForm;
+
+/* AVAILABILITY */
+window.toggleProduct = async (id, current) => {
+  const { error } = await db
+    .from("products")
+    .update({ is_available:!current })
+    .eq("id", id);
+
+  if (error) return message(error.message);
+
+  message("Product availability updated.");
+  await loadProducts();
+};
+
+/* DELETE PRODUCT */
+window.deleteProduct = async id => {
+  if (!confirm("Are you sure you want to delete this product?")) return;
+
+  const { error } = await db.from("products").delete().eq("id", id);
+
+  if (error) return message(error.message);
+
+  message("Product deleted.");
+  await loadProducts();
+  await refreshDashboard();
+};
+
+/* CUSTOMER ORDERS */
+async function loadOrders() {
+  $("orderList").textContent = "Loading orders...";
+
+  const { data, error } = await db
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending:false });
+
+  if (error) {
+    $("orderList").textContent = error.message;
+    return;
+  }
+
+  if (!data?.length) {
+    $("orderList").innerHTML = '<p class="muted">No customer orders yet.</p>';
+    return;
+  }
+
+  const statuses = ["Pending","Confirmed","Preparing","Ready","Completed","Cancelled"];
+
+  $("orderList").innerHTML = data.map(o => `
+    <div class="card">
+      <b>Order #${escapeHTML(o.order_number)}</b> · ${money(o.total)}
+      <p><b>Customer:</b> ${escapeHTML(o.customer_name)} · ${escapeHTML(o.customer_phone)}</p>
+      <p><b>Address:</b> ${escapeHTML(o.delivery_address)}</p>
+      <p><b>Payment:</b> ${escapeHTML(o.payment_method)}</p>
+      <p><b>Items:</b> ${escapeHTML((o.items || []).map(i =>
+        i.quantity + "x " + i.name + " (" + (i.size || "") + ")"
+      ).join(", "))}</p>
+      <p><b>Notes:</b> ${escapeHTML(o.notes || "None")}</p>
+      <div class="actions">
+        <select id="status-${o.id}">
+          ${statuses.map(s =>
+            `<option value="${s}" ${o.status === s ? "selected" : ""}>${s}</option>`
+          ).join("")}
+        </select>
+        <button class="btn" onclick="updateOrderStatus('${o.id}')">Update Status</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+window.updateOrderStatus = async id => {
+  const status = $("status-" + id).value;
+
+  const { error } = await db
+    .from("orders")
+    .update({
+      status,
+      updated_at:new Date().toISOString()
+    })
+    .eq("id", id);
+
+  if (error) return message(error.message);
+
+  message("Order status updated!");
+  loadOrders();
+};
+
+$("refreshOrders").onclick = loadOrders;
+</script>
+</body>
+</html>
