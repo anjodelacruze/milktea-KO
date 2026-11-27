@@ -3,505 +3,269 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Milktea KO - Admin Dashboard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#6b3825">
+<title>Milktea KO Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--orange:#ff7900;--cream:#fff8ed;--dark:#292016;--muted:#887e72}
-*{box-sizing:border-box}
-body{margin:0;background:var(--cream);color:var(--dark);font-family:Nunito,sans-serif}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer;border:0}
-header{background:white;padding:15px 5%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 15px #39240d10;position:sticky;top:0;z-index:5}
-.brand{font-size:21px;font-weight:900}.brand span{color:var(--orange)}
-a{color:inherit;text-decoration:none}
-main{width:92%;max-width:1100px;margin:28px auto}
-.panel{background:white;padding:23px;border-radius:20px;box-shadow:0 10px 30px #462b0f10;margin-bottom:20px}
+:root{--brown:#6b3825;--dark:#40251b;--orange:#d98742;--cream:#fff8ed;--muted:#927d6e;--green:#45845c;--red:#b34b36}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark)}
+button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}
 .hidden{display:none!important}
-h1{font-size:27px;margin:0 0 6px}h2{margin:0 0 15px}
-.muted{color:var(--muted)}
-.btn{background:var(--orange);color:white;padding:11px 17px;border-radius:12px;font-weight:900}
-.btn.secondary{background:#fff0dc;color:var(--dark)}
-.btn.danger{background:#b63d32}
-.field{margin:12px 0}
-.field label{display:block;font-weight:900;font-size:13px;margin-bottom:6px}
-.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #e9ddce;border-radius:11px;background:#fffdf9}
-.field textarea{min-height:75px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.tabs,.actions{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}
-.tabs button{padding:10px 16px;border-radius:11px;background:#fff0dc;font-weight:900}
-.tabs button.active{background:var(--orange);color:white}
-.card{border:1px solid #eee2d5;border-radius:15px;padding:15px;margin:12px 0}
-.card p{font-size:14px;color:var(--muted);margin:5px 0}
-.preview{width:76px;height:76px;object-fit:cover;border-radius:12px;background:#fff0dc}
-.product-head{display:flex;gap:12px;align-items:center}
-.stat{display:inline-block;background:#fff4e7;border-radius:13px;padding:12px 16px;margin:5px;font-weight:900}
-#message{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#292016;color:white;padding:12px 18px;border-radius:12px;display:none;z-index:10;max-width:90%;text-align:center}
-@media(max-width:650px){.grid{grid-template-columns:1fr}.panel{padding:17px}header{padding:13px 4%}}
+.wrap{width:min(1150px,94%);margin:auto}
+header{background:var(--brown);color:white;padding:17px 0}
+.brand{font-family:Poppins;font-size:22px;font-weight:800}.brand span{color:#f0ad6c}
+header p{font-size:12px;opacity:.8}
+main{padding:25px 0}
+.card{background:white;border-radius:17px;padding:19px;margin:15px 0;box-shadow:0 6px 25px #4b2a1910}
+h2{font-family:Poppins;font-size:20px;margin-bottom:12px}
+h3{font-size:15px}
+.muted{font-size:12px;color:var(--muted)}
+.field{width:100%;padding:12px;border:1px solid #e8d8c5;border-radius:11px;margin:6px 0 13px;outline:none;background:white}
+.field:focus{border-color:var(--orange)}
+label{font-size:12px;font-weight:700}
+.btn{background:var(--brown);color:white;padding:11px 16px;border-radius:11px;font-weight:700}
+.btn.orange{background:var(--orange)}.btn.red{background:var(--red)}.btn.green{background:var(--green)}
+.btn.light{background:#f1e4d4;color:var(--brown)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.tab{padding:10px 17px;background:#efdfca;color:var(--brown);border-radius:10px;font-weight:700}
+.tab.active{background:var(--brown);color:white}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{background:#fff8ed;border-radius:13px;padding:16px}
+.stat b{display:block;font-size:24px;color:var(--brown);font-family:Poppins}
+.stat span{font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.product-row,.order-row{border:1px solid #f0e4d7;border-radius:13px;padding:13px;margin:10px 0;display:flex;gap:12px;align-items:center}
+.thumb{width:75px;height:75px;border-radius:11px;object-fit:cover;background:#f1dfc8;flex-shrink:0}
+.product-row .info,.order-row .info{flex:1;min-width:0}
+.product-row p,.order-row p{font-size:12px;color:var(--muted);margin:4px 0}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.actions button{font-size:11px;padding:8px 10px}
+.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#e4f2e8;color:#34744c;font-size:10px;font-weight:700}
+.pill.off{background:#f8e4df;color:#a44232}
+.preview{width:100%;max-height:180px;object-fit:cover;border-radius:12px;margin:8px 0}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:11px}.stat b{font-size:19px}.product-row,.order-row{align-items:flex-start}.thumb{width:65px;height:65px}}
 </style>
 </head>
 <body>
-<div id="message"></div>
-<header>
-  <div class="brand">🧋 Milktea <span>KO</span> Admin</div>
-  <a href="./index.html" class="muted">← Customer Store</a>
-</header>
-
-<main>
-<section class="panel" id="loginPanel">
-  <h1>Admin Login 🔐</h1>
-  <p class="muted">Sign in using your authorized admin account.</p>
-  <form id="loginForm">
-    <div class="field">
-      <label>Email</label>
-      <input id="email" type="email" required autocomplete="username">
-    </div>
-    <div class="field">
-      <label>Password</label>
-      <input id="password" type="password" required autocomplete="current-password">
-    </div>
-    <button class="btn" id="loginButton">Login to Dashboard</button>
-  </form>
+<header><div class="wrap"><div class="brand">MILKTEA <span>KO.</span> ADMIN</div><p>Manage your drinks and customer orders</p></div></header>
+<main class="wrap">
+<section id="loginSection" class="card" style="max-width:430px;margin:35px auto">
+ <h2>Admin Login 🔐</h2><p class="muted">Sign in using your authorized admin account.</p>
+ <form id="loginForm">
+  <label>Email</label><input class="field" id="loginEmail" type="email" required placeholder="Admin email">
+  <label>Password</label><input class="field" id="loginPassword" type="password" required placeholder="Password">
+  <button class="btn" id="loginBtn" style="width:100%">Login</button>
+ </form>
+ <p id="loginMessage" class="muted" style="margin-top:12px"></p>
 </section>
 
 <section id="dashboard" class="hidden">
-  <div class="panel">
-    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
-      <div>
-        <h1>Dashboard ⚙️</h1>
-        <p class="muted">Manage drinks, photos, availability and orders.</p>
-      </div>
-      <button class="btn secondary" id="logoutButton">Logout</button>
+ <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+  <div><h2>Dashboard</h2><p class="muted" id="adminEmail"></p></div>
+  <button class="btn light" onclick="logout()">Logout</button>
+ </div>
+ <div class="stats">
+  <div class="stat"><b id="productCount">0</b><span>Products</span></div>
+  <div class="stat"><b id="orderCount">0</b><span>Orders</span></div>
+  <div class="stat"><b id="pendingCount">0</b><span>Pending</span></div>
+ </div>
+ <div class="tabs">
+  <button class="tab active" onclick="showTab('products',this)">Products</button>
+  <button class="tab" onclick="showTab('orders',this)">Orders</button>
+ </div>
+
+ <section id="productsTab">
+  <div class="card">
+   <h2 id="formTitle">Add New Drink 🧋</h2>
+   <form id="productForm">
+    <input type="hidden" id="productId">
+    <div class="grid">
+     <div><label>Product name *</label><input class="field" id="pName" required placeholder="e.g. Brown Sugar Milk Tea"></div>
+     <div><label>Category *</label><select class="field" id="pCategory"><option>Classic</option><option>Fruit Tea</option><option>Cheese Series</option><option>Best Sellers</option><option>Specialty</option></select></div>
+     <div><label>Base price (₱) *</label><input class="field" id="pPrice" type="number" min="0" step="0.01" required placeholder="89"></div>
+     <div><label>Display order</label><input class="field" id="pSort" type="number" value="0"></div>
     </div>
-    <div id="stats"></div>
-    <div class="tabs">
-      <button class="active" data-tab="products">🥤 Products</button>
-      <button data-tab="orders">🧾 Orders</button>
+    <label>Description</label><textarea class="field" id="pDescription" rows="2" placeholder="Describe your drink"></textarea>
+    <label>Sizes and extra prices</label><input class="field" id="pSizes" placeholder="M:0, L:20">
+    <p class="muted">Example: M:0, L:20 means medium has no extra charge and large adds ₱20.</p>
+    <label>Toppings and extra prices</label><input class="field" id="pToppings" placeholder="Pearls:10, Pudding:15, Cream Cheese:20">
+    <label>Sugar levels</label><input class="field" id="pSugar" placeholder="0%, 25%, 50%, 75%, 100%">
+    <label>Ice levels</label><input class="field" id="pIce" placeholder="No Ice, Less Ice, Regular Ice">
+    <label>Product image</label><input class="field" id="pImage" type="file" accept="image/*">
+    <img id="imagePreview" class="preview hidden" alt="Image preview">
+    <div style="display:flex;gap:15px;flex-wrap:wrap;margin:7px 0 15px">
+     <label><input type="checkbox" id="pAvailable" checked> Available</label>
+     <label><input type="checkbox" id="pFeatured"> Best seller</label>
     </div>
+    <button class="btn orange" id="saveProductBtn">Save Product</button>
+    <button class="btn light hidden" type="button" id="cancelEditBtn" onclick="resetForm()">Cancel Edit</button>
+   </form>
+   <p class="muted" id="productMessage" style="margin-top:10px"></p>
   </div>
+  <div class="card"><h2>Your Products</h2><div id="productsList">Loading...</div></div>
+ </section>
 
-  <div id="productsTab">
-    <div class="panel">
-      <h2 id="formTitle">Add New Drink</h2>
-      <form id="productForm">
-        <input type="hidden" id="productId">
-
-        <div class="grid">
-          <div class="field">
-            <label>Drink Name *</label>
-            <input id="name" required placeholder="Example: Wintermelon Milk Tea">
-          </div>
-          <div class="field">
-            <label>Price (₱) *</label>
-            <input id="price" type="number" min="1" step="0.01" required>
-          </div>
-          <div class="field">
-            <label>Category</label>
-            <select id="category">
-              <option>Classic</option>
-              <option>Fruit Tea</option>
-              <option>Specialty</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Product Photo</label>
-            <input id="photo" type="file" accept="image/*">
-            <small class="muted">Choose a photo from your phone.</small>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>Description</label>
-          <textarea id="description" placeholder="Describe your drink..."></textarea>
-        </div>
-
-        <div class="grid">
-          <div class="field">
-            <label>Sizes (comma-separated)</label>
-            <input id="sizes" value="M,L">
-          </div>
-          <div class="field">
-            <label>Toppings (comma-separated)</label>
-            <input id="toppings" value="Pearls,Pudding,Cream Cheese">
-          </div>
-          <div class="field">
-            <label>Sugar Levels</label>
-            <input id="sugars" value="0%,25%,50%,75%,100%">
-          </div>
-          <div class="field">
-            <label>Ice Levels</label>
-            <input id="ices" value="No Ice,Less Ice,Regular Ice">
-          </div>
-        </div>
-
-        <div class="field">
-          <label>
-            <input id="available" type="checkbox" checked style="width:auto">
-            Available for customers
-          </label>
-        </div>
-
-        <div class="actions">
-          <button class="btn" id="saveButton">Save Product</button>
-          <button class="btn secondary hidden" type="button" id="cancelEdit">Cancel Edit</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="panel">
-      <h2>All Products</h2>
-      <div id="productList">Loading products...</div>
-    </div>
-  </div>
-
-  <div id="ordersTab" class="hidden">
-    <div class="panel">
-      <h2>Customer Orders</h2>
-      <button class="btn secondary" id="refreshOrders">Refresh Orders</button>
-      <div id="orderList">Loading orders...</div>
-    </div>
-  </div>
+ <section id="ordersTab" class="hidden">
+  <div class="card"><h2>Customer Orders 📦</h2><button class="btn light" onclick="loadOrders()">Refresh orders</button><div id="ordersList" style="margin-top:12px">Loading...</div></div>
+ </section>
 </section>
 </main>
 
 <script>
-/* SUPABASE CONNECTION */
-const SUPABASE_URL = "https://soejrrbvdjllbqtkfdqm.supabase.co";
-const SUPABASE_KEY = "sb_publishable_wzFt1BdjWWTVlEdI6KfsYg_zHXLP6yq";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const $ = id => document.getElementById(id);
-const money = n => "₱" + Number(n || 0).toFixed(2);
-
-let products = [];
-
-function message(text) {
-  $("message").textContent = text;
-  $("message").style.display = "block";
-  setTimeout(() => $("message").style.display = "none", 3000);
+const SUPABASE_URL="https://soejrrbvdjllbqtkfdqm.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_wzFt1BdjWWTVlEdI6KfsYg_zHXLP6yq";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let currentUser=null,products=[],orders=[],editingImageUrl=null;
+const $=id=>document.getElementById(id);
+const peso=n=>'₱'+Number(n||0).toLocaleString('en-PH',{maximumFractionDigits:2});
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nameOf=o=>typeof o==='string'?o:o?.name||'';
+const extraOf=o=>typeof o==='object'&&o?Number(o.price||0):0;
+function parseOptions(value){
+ return value.split(',').map(x=>x.trim()).filter(Boolean).map(x=>{
+  const i=x.lastIndexOf(':');
+  if(i<0)return {name:x,price:0};
+  const name=x.slice(0,i).trim(),price=Number(x.slice(i+1).trim());
+  return {name,price:Number.isFinite(price)&&price>=0?price:0};
+ }).filter(x=>x.name);
 }
-
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-  }[c]));
+function formatOptions(arr){
+ return (arr||[]).map(x=>typeof x==='string'?x:`${x.name}:${Number(x.price||0)}`).join(', ');
 }
+function formatPlainOptions(arr){return (arr||[]).map(nameOf).join(', ')}
 
-function csvList(value) {
-  return value.split(",").map(x => x.trim()).filter(Boolean);
+async function checkAdmin(){
+ const {data:{session}}=await db.auth.getSession();
+ if(!session){showLogin();return}
+ currentUser=session.user;
+ const {data,error}=await db.from('admin_users').select('user_id').eq('user_id',currentUser.id).maybeSingle();
+ if(error||!data){await db.auth.signOut();showLogin('This account is not authorized as an admin.');return}
+ $('loginSection').classList.add('hidden');$('dashboard').classList.remove('hidden');$('adminEmail').textContent=currentUser.email;
+ await refreshDashboard();
 }
-
-/* ADMIN LOGIN */
-$("loginForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  $("loginButton").disabled = true;
-  $("loginButton").textContent = "Logging in...";
-
-  try {
-    const { data, error } = await db.auth.signInWithPassword({
-      email: $("email").value.trim(),
-      password: $("password").value
-    });
-
-    if (error) throw error;
-
-    const { data: member, error: memberError } = await db
-      .from("admin_users")
-      .select("user_id")
-      .eq("user_id", data.user.id)
-      .maybeSingle();
-
-    if (memberError || !member) {
-      await db.auth.signOut();
-      throw new Error("This account is not authorized as an admin.");
-    }
-
-    $("loginPanel").classList.add("hidden");
-    $("dashboard").classList.remove("hidden");
-    await refreshDashboard();
-
-  } catch (error) {
-    message(error.message);
-  } finally {
-    $("loginButton").disabled = false;
-    $("loginButton").textContent = "Login to Dashboard";
-  }
+function showLogin(message=''){
+ $('loginSection').classList.remove('hidden');$('dashboard').classList.add('hidden');$('loginMessage').textContent=message;
+}
+$('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();const btn=$('loginBtn');btn.disabled=true;btn.textContent='Signing in...';
+ try{
+  const {error}=await db.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});
+  if(error)throw error;await checkAdmin();
+ }catch(err){$('loginMessage').textContent=err.message}
+ finally{btn.disabled=false;btn.textContent='Login'}
 });
-
-$("logoutButton").onclick = async () => {
-  await db.auth.signOut();
-  location.reload();
-};
-
-/* DASHBOARD TABS */
-document.querySelectorAll("[data-tab]").forEach(button => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll("[data-tab]").forEach(b =>
-      b.classList.toggle("active", b === button)
-    );
-
-    $("productsTab").classList.toggle("hidden", button.dataset.tab !== "products");
-    $("ordersTab").classList.toggle("hidden", button.dataset.tab !== "orders");
-
-    if (button.dataset.tab === "orders") loadOrders();
-    else loadProducts();
-  });
+async function logout(){await db.auth.signOut();showLogin('You have signed out.')}
+async function refreshDashboard(){await Promise.all([loadProducts(),loadOrders()])}
+function showTab(tab,btn){
+ $('productsTab').classList.toggle('hidden',tab!=='products');$('ordersTab').classList.toggle('hidden',tab!=='orders');
+ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
+}
+async function loadProducts(){
+ const {data,error}=await db.from('products').select('*').order('sort_order');
+ if(error){$('productsList').textContent=error.message;return}
+ products=data||[];$('productCount').textContent=products.length;
+ $('productsList').innerHTML=products.length?products.map(p=>`
+  <div class="product-row">
+   ${p.image_url?`<img class="thumb" src="${esc(p.image_url)}" alt="">`:'<div class="thumb" style="display:grid;place-items:center;font-size:30px">🧋</div>'}
+   <div class="info"><h3>${esc(p.name)}</h3><p>${esc(p.category||'')} • ${peso(p.price)}</p>
+   <span class="pill ${p.is_available?'':'off'}">${p.is_available?'Available':'Sold Out'}</span>${p.is_featured?' <span class="pill">Best Seller</span>':''}
+   <div class="actions"><button class="btn light" onclick="editProduct('${p.id}')">Edit</button><button class="btn ${p.is_available?'red':'green'}" onclick="toggleAvailability('${p.id}',${!p.is_available})">${p.is_available?'Mark Sold Out':'Make Available'}</button><button class="btn red" onclick="deleteProduct('${p.id}')">Delete</button></div></div>
+  </div>`).join(''):'<p class="muted">No products yet. Add your first drink above.</p>';
+}
+$('pImage').addEventListener('change',()=>{
+ const f=$('pImage').files[0];if(!f)return;
+ if(!f.type.startsWith('image/')){alert('Please select an image file.');$('pImage').value='';return}
+ const url=URL.createObjectURL(f);$('imagePreview').src=url;$('imagePreview').classList.remove('hidden');
 });
-
-async function refreshDashboard() {
-  await loadProducts();
-  const { count, error } = await db
-    .from("orders")
-    .select("*", { count:"exact", head:true });
-
-  $("stats").innerHTML =
-    '<span class="stat">🥤 Products: ' + products.length + '</span>' +
-    '<span class="stat">🧾 Orders: ' + (error ? "—" : count || 0) + '</span>';
+async function uploadImage(file){
+ const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+ const path=`products/${crypto.randomUUID()}.${ext||'jpg'}`;
+ const {error}=await db.storage.from('product-images').upload(path,file,{upsert:false,contentType:file.type});
+ if(error)throw error;
+ const {data}=db.storage.from('product-images').getPublicUrl(path);
+ return data.publicUrl;
 }
-
-/* PRODUCTS */
-async function loadProducts() {
-  $("productList").textContent = "Loading products...";
-
-  const { data, error } = await db
-    .from("products")
-    .select("*")
-    .order("created_at", { ascending:false });
-
-  if (error) {
-    $("productList").textContent = error.message;
-    return;
-  }
-
-  products = data || [];
-
-  if (!products.length) {
-    $("productList").innerHTML = '<p class="muted">No products yet. Add your first drink above.</p>';
-    return;
-  }
-
-  $("productList").innerHTML = products.map(p => `
-    <div class="card">
-      <div class="product-head">
-        ${
-          p.image_url
-          ? `<img class="preview" src="${escapeHTML(p.image_url)}" alt="">`
-          : `<div class="preview" style="display:grid;place-items:center;font-size:30px">🧋</div>`
-        }
-        <div>
-          <b>${escapeHTML(p.name)}</b>
-          <p>${money(p.price)} · ${escapeHTML(p.category || "")}</p>
-          <p>${p.is_available ? "🟢 Available" : "🔴 Sold Out"}</p>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn secondary" onclick="editProduct('${p.id}')">Edit</button>
-        <button class="btn secondary" onclick="toggleProduct('${p.id}',${!!p.is_available})">
-          ${p.is_available ? "Mark Sold Out" : "Make Available"}
-        </button>
-        <button class="btn danger" onclick="deleteProduct('${p.id}')">Delete</button>
-      </div>
-    </div>
-  `).join("");
-}
-
-/* ADD OR UPDATE PRODUCT */
-$("productForm").addEventListener("submit", async e => {
-  e.preventDefault();
-
-  const saveButton = $("saveButton");
-  saveButton.disabled = true;
-  saveButton.textContent = "Saving...";
-
-  try {
-    const id = $("productId").value;
-    const existing = products.find(p => p.id === id);
-    const file = $("photo").files[0];
-
-    let imageURL = existing?.image_url || null;
-
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        throw new Error("Please select an image file.");
-      }
-
-      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const filePath = Date.now() + "-" + safeName;
-
-      const { error: uploadError } = await db.storage
-        .from("product-images")
-        .upload(filePath, file, {
-          contentType:file.type,
-          cacheControl:"3600",
-          upsert:false
-        });
-
-      if (uploadError) throw uploadError;
-
-      imageURL = db.storage
-        .from("product-images")
-        .getPublicUrl(filePath).data.publicUrl;
-    }
-
-    const product = {
-      name: $("name").value.trim(),
-      price: Number($("price").value),
-      category: $("category").value,
-      description: $("description").value.trim(),
-      image_url: imageURL,
-      sizes: csvList($("sizes").value),
-      toppings: csvList($("toppings").value),
-      sugar_levels: csvList($("sugars").value),
-      ice_levels: csvList($("ices").value),
-      is_available: $("available").checked,
-      is_featured: existing?.is_featured || false,
-      sort_order: existing?.sort_order || 0
-    };
-
-    const result = id
-      ? await db.from("products").update(product).eq("id", id)
-      : await db.from("products").insert(product);
-
-    if (result.error) throw result.error;
-
-    message(id ? "Product updated successfully!" : "New product added!");
-    resetProductForm();
-    await loadProducts();
-    await refreshDashboard();
-
-  } catch (error) {
-    message(error.message);
-  } finally {
-    saveButton.disabled = false;
-    saveButton.textContent = $("productId").value ? "Update Product" : "Save Product";
-  }
+$('productForm').addEventListener('submit',async e=>{
+ e.preventDefault();const btn=$('saveProductBtn');btn.disabled=true;btn.textContent='Saving...';$('productMessage').textContent='';
+ try{
+  const file=$('pImage').files[0];let imageUrl=editingImageUrl;
+  if(file)imageUrl=await uploadImage(file);
+  const sizes=parseOptions($('pSizes').value),toppings=parseOptions($('pToppings').value);
+  if(!sizes.length)throw new Error('Please enter at least one size.');
+  const payload={
+   name:$('pName').value.trim(),description:$('pDescription').value.trim(),
+   category:$('pCategory').value,price:Number($('pPrice').value),
+   sizes,toppings,
+   sugar_levels:$('pSugar').value.split(',').map(x=>x.trim()).filter(Boolean).map(name=>({name,price:0})),
+   ice_levels:$('pIce').value.split(',').map(x=>x.trim()).filter(Boolean).map(name=>({name,price:0})),
+   image_url:imageUrl,is_available:$('pAvailable').checked,is_featured:$('pFeatured').checked,
+   sort_order:Number($('pSort').value)||0,updated_at:new Date().toISOString()
+  };
+  if(!payload.name||!Number.isFinite(payload.price)||payload.price<0)throw new Error('Check product name and price.');
+  const id=$('productId').value;
+  const result=id?await db.from('products').update(payload).eq('id',id):await db.from('products').insert(payload);
+  if(result.error)throw result.error;
+  $('productMessage').textContent='Product saved successfully!';resetForm();await loadProducts();
+ }catch(err){$('productMessage').textContent='Error: '+err.message;console.error(err)}
+ finally{btn.disabled=false;btn.textContent='Save Product'}
 });
-
-/* EDIT PRODUCT */
-window.editProduct = id => {
-  const p = products.find(item => item.id === id);
-  if (!p) return;
-
-  $("productId").value = p.id;
-  $("name").value = p.name || "";
-  $("price").value = p.price || "";
-  $("category").value = p.category || "Classic";
-  $("description").value = p.description || "";
-  $("sizes").value = (p.sizes || []).join(",");
-  $("toppings").value = (p.toppings || []).join(",");
-  $("sugars").value = (p.sugar_levels || []).join(",");
-  $("ices").value = (p.ice_levels || []).join(",");
-  $("available").checked = !!p.is_available;
-
-  $("formTitle").textContent = "Edit Drink";
-  $("saveButton").textContent = "Update Product";
-  $("cancelEdit").classList.remove("hidden");
-  window.scrollTo({ top:0, behavior:"smooth" });
-};
-
-function resetProductForm() {
-  $("productForm").reset();
-  $("productId").value = "";
-  $("sizes").value = "M,L";
-  $("toppings").value = "Pearls,Pudding,Cream Cheese";
-  $("sugars").value = "0%,25%,50%,75%,100%";
-  $("ices").value = "No Ice,Less Ice,Regular Ice";
-  $("available").checked = true;
-  $("formTitle").textContent = "Add New Drink";
-  $("saveButton").textContent = "Save Product";
-  $("cancelEdit").classList.add("hidden");
+function editProduct(id){
+ const p=products.find(x=>x.id===id);if(!p)return;
+ $('productId').value=p.id;$('pName').value=p.name;$('pCategory').value=p.category||'Classic';$('pPrice').value=p.price;
+ $('pDescription').value=p.description||'';$('pSizes').value=formatOptions(p.sizes);$('pToppings').value=formatOptions(p.toppings);
+ $('pSugar').value=formatPlainOptions(p.sugar_levels);$('pIce').value=formatPlainOptions(p.ice_levels);
+ $('pSort').value=p.sort_order||0;$('pAvailable').checked=!!p.is_available;$('pFeatured').checked=!!p.is_featured;
+ editingImageUrl=p.image_url||null;$('imagePreview').classList.toggle('hidden',!p.image_url);if(p.image_url)$('imagePreview').src=p.image_url;
+ $('formTitle').textContent='Edit Drink';$('cancelEditBtn').classList.remove('hidden');$('saveProductBtn').textContent='Update Product';
+ $('productsTab').scrollIntoView({behavior:'smooth'});
 }
-
-$("cancelEdit").onclick = resetProductForm;
-
-/* AVAILABILITY */
-window.toggleProduct = async (id, current) => {
-  const { error } = await db
-    .from("products")
-    .update({ is_available:!current })
-    .eq("id", id);
-
-  if (error) return message(error.message);
-
-  message("Product availability updated.");
-  await loadProducts();
-};
-
-/* DELETE PRODUCT */
-window.deleteProduct = async id => {
-  if (!confirm("Are you sure you want to delete this product?")) return;
-
-  const { error } = await db.from("products").delete().eq("id", id);
-
-  if (error) return message(error.message);
-
-  message("Product deleted.");
-  await loadProducts();
-  await refreshDashboard();
-};
-
-/* CUSTOMER ORDERS */
-async function loadOrders() {
-  $("orderList").textContent = "Loading orders...";
-
-  const { data, error } = await db
-    .from("orders")
-    .select("*")
-    .order("created_at", { ascending:false });
-
-  if (error) {
-    $("orderList").textContent = error.message;
-    return;
-  }
-
-  if (!data?.length) {
-    $("orderList").innerHTML = '<p class="muted">No customer orders yet.</p>';
-    return;
-  }
-
-  const statuses = ["Pending","Confirmed","Preparing","Ready","Completed","Cancelled"];
-
-  $("orderList").innerHTML = data.map(o => `
-    <div class="card">
-      <b>Order #${escapeHTML(o.order_number)}</b> · ${money(o.total)}
-      <p><b>Customer:</b> ${escapeHTML(o.customer_name)} · ${escapeHTML(o.customer_phone)}</p>
-      <p><b>Address:</b> ${escapeHTML(o.delivery_address)}</p>
-      <p><b>Payment:</b> ${escapeHTML(o.payment_method)}</p>
-      <p><b>Items:</b> ${escapeHTML((o.items || []).map(i =>
-        i.quantity + "x " + i.name + " (" + (i.size || "") + ")"
-      ).join(", "))}</p>
-      <p><b>Notes:</b> ${escapeHTML(o.notes || "None")}</p>
-      <div class="actions">
-        <select id="status-${o.id}">
-          ${statuses.map(s =>
-            `<option value="${s}" ${o.status === s ? "selected" : ""}>${s}</option>`
-          ).join("")}
-        </select>
-        <button class="btn" onclick="updateOrderStatus('${o.id}')">Update Status</button>
-      </div>
-    </div>
-  `).join("");
+function resetForm(){
+ $('productForm').reset();$('productId').value='';$('pAvailable').checked=true;$('pSort').value=0;
+ editingImageUrl=null;$('imagePreview').classList.add('hidden');$('imagePreview').removeAttribute('src');
+ $('formTitle').textContent='Add New Drink 🧋';$('cancelEditBtn').classList.add('hidden');$('saveProductBtn').textContent='Save Product';
 }
-
-window.updateOrderStatus = async id => {
-  const status = $("status-" + id).value;
-
-  const { error } = await db
-    .from("orders")
-    .update({
-      status,
-      updated_at:new Date().toISOString()
-    })
-    .eq("id", id);
-
-  if (error) return message(error.message);
-
-  message("Order status updated!");
-  loadOrders();
-};
-
-$("refreshOrders").onclick = loadOrders;
+async function toggleAvailability(id,value){
+ const {error}=await db.from('products').update({is_available:value,updated_at:new Date().toISOString()}).eq('id',id);
+ if(error){alert(error.message);return}await loadProducts();
+}
+async function deleteProduct(id){
+ if(!confirm('Delete this product permanently?'))return;
+ const {error}=await db.from('products').delete().eq('id',id);
+ if(error){alert(error.message);return}await loadProducts();
+}
+async function loadOrders(){
+ const {data,error}=await db.from('orders').select('*').order('created_at',{ascending:false}).limit(100);
+ if(error){$('ordersList').textContent=error.message;return}
+ orders=data||[];$('orderCount').textContent=orders.length;$('pendingCount').textContent=orders.filter(o=>o.status==='Pending').length;
+ $('ordersList').innerHTML=orders.length?orders.map(o=>{
+  const items=Array.isArray(o.items)?o.items:[];
+  return `<div class="order-row"><div class="info">
+   <h3>Order #${esc(o.order_number)} <span class="pill">${esc(o.status)}</span></h3>
+   <p><b>${esc(o.customer_name||'Customer')}</b> • ${esc(o.customer_phone||'')}</p>
+   <p>${esc(o.delivery_address||'')}</p>
+   <p>${items.map(i=>`${esc(i.quantity)}× ${esc(i.name||i.product_name||'Drink')} (${esc(i.size||'')})`).join('<br>')}</p>
+   <p>Payment: ${esc(o.payment_method||'Cash on Delivery')} • <b>${peso(o.total)}</b></p>
+   <p>${o.created_at?new Date(o.created_at).toLocaleString():''}</p>
+   <div class="actions">
+    <select class="field" style="width:auto;min-width:145px;margin:0" id="status-${o.id}">
+     ${['Pending','Confirmed','Preparing','Ready','Completed','Cancelled'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}
+    </select>
+    <button class="btn orange" onclick="updateOrderStatus('${o.id}')">Update Status</button>
+   </div>
+  </div></div>`;
+ }).join(''):'<p class="muted">No orders yet.</p>';
+}
+async function updateOrderStatus(id){
+ const status=$('status-'+id).value;
+ const {error}=await db.from('orders').update({status,updated_at:new Date().toISOString()}).eq('id',id);
+ if(error){alert('Could not update order: '+error.message);return}
+ alert('Order status updated.');await loadOrders();
+}
+checkAdmin();
 </script>
 </body>
 </html>
